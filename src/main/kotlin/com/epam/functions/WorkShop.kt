@@ -7,6 +7,23 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.selects.select
 import kotlin.system.measureTimeMillis
+import kotlinx.coroutines.channels.onReceiveOrNull as onReceiveOrNullExt
+
+
+/**
+ * Let’s assume that you have a small automated workshop that produces a cars on the automation line.
+But it is not full automated - it should be observed by “Constructor” - now you have 2
+Also you have 2 body lines and 2 equipment lines
+And one order desk - that collects the orders and starts the whole process.
+Our program should
+ * Take an order
+ * Pick Constructor
+ * Create body  (in parallel)
+ * Create Equipment (in parallel)
+ * Combine the body and  equipment
+ * Provide a car
+
+Please use channels to synchronise this processes */
 
 @kotlinx.coroutines.ExperimentalCoroutinesApi
 fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.main")) {
@@ -37,13 +54,13 @@ fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.ma
         while (isConstructorOneActive || isConstructorTwoActive) {
             select<Unit> {
                 if (isConstructorOneActive) {
-                    carChannelA.onReceiveOrNull { v ->
+                    carChannelA.onReceiveOrNullExt().invoke { v ->
                         if (carChannelA.isClosedForReceive) isConstructorOneActive = false
                         if (v != null) log("Provided: $v")
                     }
                 }
                 if (isConstructorTwoActive) {
-                    carChannelB.onReceiveOrNull { v ->
+                    carChannelA.onReceiveOrNullExt().invoke { v ->
                         if (carChannelB.isClosedForReceive) isConstructorTwoActive = false
                         if (v != null) log("Provided: $v")
                     }
@@ -61,7 +78,11 @@ private fun CoroutineScope.processOrders(orders: List<Products>) = produce(Corou
 }
 
 // convert this to a producer of completed car orders
-private fun CoroutineScope.createCar(tag: String, orders: ReceiveChannel<Products>, constructMachine: ConstructMachine) = produce(CoroutineName(tag)) {
+private fun CoroutineScope.createCar(
+    tag: String,
+    orders: ReceiveChannel<Products>,
+    constructMachine: ConstructMachine
+) = produce(CoroutineName(tag)) {
     for (o in orders) {
         log("Processing order: $o")
         when (o) {
@@ -84,7 +105,11 @@ private suspend fun prepareBody(body: Body): Body.ChoosedBody {
     return Body.ChoosedBody(body)
 }
 
-private suspend fun finalCompose(order: Products.Car, sparePartsShot: SpareParts, equipment: Equipment.CompiledEquipment): OutPut.FinishedCar {
+private suspend fun finalCompose(
+    order: Products.Car,
+    sparePartsShot: SpareParts,
+    equipment: Equipment.CompiledEquipment
+): OutPut.FinishedCar {
     log("Combining parts")
     delay(5)
     return OutPut.FinishedCar(order, sparePartsShot, equipment)
