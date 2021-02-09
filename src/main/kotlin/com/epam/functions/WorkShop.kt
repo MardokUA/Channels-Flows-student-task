@@ -1,9 +1,9 @@
 package com.epam.functions
 
-import com.epam.functions.data.*
+import com.epam.functions.data.Car
+import com.epam.functions.data.Part
 import com.epam.functions.utils.log
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.selects.select
 import kotlin.system.measureTimeMillis
@@ -11,39 +11,48 @@ import kotlinx.coroutines.channels.onReceiveOrNull as onReceiveOrNullExt
 
 
 /**
- * Let’s assume that you have a small automated workshop that produces a cars on the automation line.
-But it is not full automated - it should be observed by “Constructor” - now you have 2
-Also you have 2 body lines and 2 equipment lines
-And one order desk - that collects the orders and starts the whole process.
+ * Let’s assume that you have a small automated workshop that produces cars on the automation line.
+But it is not full automated and it should be observed by [CarConstructor].
+Each machine uses **body line** and **equipment line** to construct a vehicle with [CarFactory].
+And there is **order desk**, which collects the orders and starts the whole process.
+
+Our workshop must have:
+ * 2 car factories
+ * 2 body lines
+ * 2 equipment lines
+
 Our program should
  * Take an order
  * Pick Constructor
  * Create body  (in parallel)
  * Create Equipment (in parallel)
- * Combine the body and  equipment
+ * Combine the body and equipment
  * Provide a car
 
-Please use channels to synchronise this processes */
+Tips:
+Please use channels to synchronise this processes
+ */
 
+@ObsoleteCoroutinesApi
 @kotlinx.coroutines.ExperimentalCoroutinesApi
 fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.main")) {
     val orders = listOf(
-        Products.Car(Body.Sedan, Equipment.Premium),
-        Products.Car(Body.SportCar, Equipment.Family),
-        Products.Car(Body.Sedan, Equipment.LowCost),
-        Products.Car(Body.Van, Equipment.Premium),
-        Products.Car(Body.Sedan, Equipment.LowCost),
-        Products.Car(Body.Van, Equipment.LowCost)
-    )
-    log(orders)
+        Car(Part.Body.Sedan, Part.Equipment.Premium),
+        Car(Part.Body.SportCar, Part.Equipment.Family),
+        Car(Part.Body.Sedan, Part.Equipment.LowCost),
+        Car(Part.Body.Van, Part.Equipment.Premium),
+        Car(Part.Body.Sedan, Part.Equipment.LowCost),
+        Car(Part.Body.Van, Part.Equipment.LowCost)
+    ).also { log(it) }
 
-    val constructMachine = ConstructMachine(this)
+    val constructMachine = CarConstructor(this)
+
     val t = measureTimeMillis {
         // orders go into either car channel a or b (to be processed by one of the two constructors)
         // the result of these will get merged to be output here
         val ordersChannel = processOrders(orders)
-        val carChannelA = createCar("constructor-1", ordersChannel, constructMachine)
-        val carChannelB = createCar("constructor-2", ordersChannel, constructMachine)
+        val carChannelA = CarFactory("constructor-1", this).createCar(ordersChannel, constructMachine)
+        val carChannelB = CarFactory("constructor-2", this).createCar(ordersChannel, constructMachine)
 
         // as of right now there's no 'onReceiveOrClosed' operator so we need to track this manually
         // if the carChannel[A|B] was closed, then onReceiveOrNull is fired on each loop rather
@@ -73,44 +82,8 @@ fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.ma
 }
 
 // convert this to a producer of orders
-private fun CoroutineScope.processOrders(orders: List<Products>) = produce(CoroutineName("orderDesk")) {
-    for (o in orders) send(o)
-}
-
-// convert this to a producer of completed car orders
-private fun CoroutineScope.createCar(
-    tag: String,
-    orders: ReceiveChannel<Products>,
-    constructMachine: ConstructMachine
-) = produce(CoroutineName(tag)) {
-    for (o in orders) {
-        log("Processing order: $o")
-        when (o) {
-            is Products.Car -> {
-                val preparedBody = prepareBody(o.body())
-                coroutineScope {
-                    val bodyDeferred = async { constructMachine.combineBody(preparedBody) }
-                    val equipmentDeferred = async { constructMachine.combineEquipment(o.equipment()) }
-                    val finalCompose = finalCompose(o, bodyDeferred.await(), equipmentDeferred.await())
-                    send(finalCompose)
-                }
-            }
-        }
+@ExperimentalCoroutinesApi
+private fun CoroutineScope.processOrders(orders: List<Car>) =
+    produce(CoroutineName("orderDesk")) {
+        for (o in orders) send(o)
     }
-}
-
-private suspend fun prepareBody(body: Body): Body.ChoosedBody {
-    log("Preparing car body")
-    delay(30)
-    return Body.ChoosedBody(body)
-}
-
-private suspend fun finalCompose(
-    order: Products.Car,
-    sparePartsShot: SpareParts,
-    equipment: Equipment.CompiledEquipment
-): OutPut.FinishedCar {
-    log("Combining parts")
-    delay(5)
-    return OutPut.FinishedCar(order, sparePartsShot, equipment)
-}
