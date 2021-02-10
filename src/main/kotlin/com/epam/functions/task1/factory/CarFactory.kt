@@ -1,11 +1,11 @@
-package com.epam.functions.factory
+package com.epam.functions.task1.factory
 
-import com.epam.functions.CarConstructor
-import com.epam.functions.data.Car
-import com.epam.functions.data.OutPut
-import com.epam.functions.data.Part
-import com.epam.functions.data.SpareParts
-import com.epam.functions.utils.log
+import com.epam.functions.task1.CarConstructor
+import com.epam.functions.task1.data.Car
+import com.epam.functions.task1.data.OutPut
+import com.epam.functions.task1.data.Part
+import com.epam.functions.task1.data.SpareParts
+import com.epam.functions.task1.utils.log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.produce

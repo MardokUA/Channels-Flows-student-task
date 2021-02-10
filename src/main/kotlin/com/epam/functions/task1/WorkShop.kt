@@ -1,9 +1,9 @@
 package com.epam.functions
 
-import com.epam.functions.data.Car
-import com.epam.functions.data.Part
-import com.epam.functions.factory.CarFactory
-import com.epam.functions.utils.log
+import com.epam.functions.task1.data.Car
+import com.epam.functions.task1.data.Part
+import com.epam.functions.task1.factory.CarFactory
+import com.epam.functions.task1.utils.log
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi

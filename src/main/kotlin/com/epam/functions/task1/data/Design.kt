@@ -1,8 +1,8 @@
-package com.epam.functions.data
+package com.epam.functions.task1.data
 
-import com.epam.functions.factory.ChosenBody
-import com.epam.functions.factory.CompiledEquipment
-import com.epam.functions.utils.format
+import com.epam.functions.task1.factory.ChosenBody
+import com.epam.functions.task1.factory.CompiledEquipment
+import com.epam.functions.task1.utils.format
 
 sealed class Part {
 

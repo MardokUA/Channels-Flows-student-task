@@ -1,4 +1,4 @@
-package com.epam.functions.utils
+package com.epam.functions.task1.utils
 
 fun log(v: Any) = println("[${Thread.currentThread().name}] $v")
 

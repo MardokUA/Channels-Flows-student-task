@@ -1,10 +1,10 @@
-package com.epam.functions
+package com.epam.functions.task1
 
-import com.epam.functions.data.Part
-import com.epam.functions.data.SpareParts
-import com.epam.functions.factory.ChosenBody
-import com.epam.functions.factory.CompiledEquipment
-import com.epam.functions.utils.log
+import com.epam.functions.task1.data.Part
+import com.epam.functions.task1.data.SpareParts
+import com.epam.functions.task1.factory.ChosenBody
+import com.epam.functions.task1.factory.CompiledEquipment
+import com.epam.functions.task1.utils.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel

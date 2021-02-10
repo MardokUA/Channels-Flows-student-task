@@ -1,6 +1,6 @@
-package com.epam.functions.factory
+package com.epam.functions.task1.factory
 
-import com.epam.functions.data.Part
+import com.epam.functions.task1.data.Part
 
 data class CompiledEquipment(val equipment: Part.Equipment){
     override fun toString() = "compiled_equipment"
