@@ -83,10 +83,14 @@ class CarConstructor(scope: CoroutineScope) : CoroutineScope by scope {
         }
     }
 
-    fun shutdown() {
+    fun shutdown(): Boolean {
         bodyLineOne.close()
         bodyLineTwo.close()
         equipmentLineOne.close()
         equipmentLineTwo.close()
+        return equipmentLineOne.isClosedForSend and
+                equipmentLineTwo.isClosedForSend and
+                bodyLineOne.isClosedForSend and
+                bodyLineTwo.isClosedForSend
     }
 }

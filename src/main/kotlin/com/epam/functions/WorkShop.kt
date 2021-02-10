@@ -59,6 +59,8 @@ fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.ma
         factory.createCar(ordersChannel).consumeEach {
             log("Provided: $it")
         }
+        val isShutdown = factory.shutdown()
+        log("Factory is shutdown: $isShutdown")
     }
 
     println("Execution time: $t ms")
