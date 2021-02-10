@@ -1,5 +1,7 @@
 package com.epam.functions.data
 
+import com.epam.functions.factory.ChosenBody
+import com.epam.functions.factory.CompiledEquipment
 import com.epam.functions.utils.format
 
 sealed class Part {
@@ -22,11 +24,6 @@ sealed class Part {
             override fun price() = 30000.50f
             override fun toString() = "van"
         }
-
-        data class ChosenBody(val body: Body) : Body() {
-            override fun price() = 0.00f
-            override fun toString() = "ground $body"
-        }
     }
 
     sealed class Equipment : Part() {
@@ -46,23 +43,18 @@ sealed class Part {
             override fun toString() = "family"
         }
     }
-
-    data class CompiledEquipment(val equipment: Equipment) : Part() {
-        override fun price() = 0.00f
-        override fun toString() = "compiled_equipment"
-    }
 }
 
-data class SpareParts(val body: Part.Body.ChosenBody)
+data class SpareParts(val body: ChosenBody)
 
 data class Car(val body: Part.Body, val equipment: Part.Equipment) {
 
     fun body() = body
-
     fun equipment() = equipment
 
-    override fun toString() =
-        "car: body=$body equipment=$equipment price=$${(body.price() + equipment.price()).format(2)}"
+    override fun toString() = "car: body=$body " +
+            "equipment=$equipment " +
+            "price=$${(body.price() + equipment.price()).format(2)}"
 }
 
 
@@ -70,6 +62,6 @@ sealed class OutPut {
     data class FinishedCar(
         val order: Car,
         val sparePartsShot: SpareParts,
-        val compiledEquipment: Part.CompiledEquipment
+        val compiledEquipment: CompiledEquipment
     ) : OutPut()
 }

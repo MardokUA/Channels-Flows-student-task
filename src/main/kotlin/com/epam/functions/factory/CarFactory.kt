@@ -1,5 +1,6 @@
-package com.epam.functions
+package com.epam.functions.factory
 
+import com.epam.functions.CarConstructor
 import com.epam.functions.data.Car
 import com.epam.functions.data.OutPut
 import com.epam.functions.data.Part
@@ -19,29 +20,26 @@ class CarFactory(private val name: String, private val scope: CoroutineScope) {
             for (order in orders) {
                 log("Processing order: $order")
                 val preparedBody = prepareBody(order.body())
-                coroutineScope {
-                    val bodyDeferred = async { carConstructor.combineBody(preparedBody) }
-                    val equipmentDeferred = async { carConstructor.combineEquipment(order.equipment()) }
-                    val finalCompose = finalCompose(order, bodyDeferred.await(), equipmentDeferred.await())
-                    send(finalCompose)
-                }
+                val bodyDeferred = async { carConstructor.combineBody(preparedBody) }
+                val equipmentDeferred = async { carConstructor.combineEquipment(order.equipment()) }
+                val finalCompose = finalCompose(order, bodyDeferred.await(), equipmentDeferred.await())
+                send(finalCompose)
             }
         }
 
-    private suspend fun prepareBody(body: Part.Body): Part.Body.ChosenBody {
+    private suspend fun prepareBody(body: Part.Body): ChosenBody {
         log("Preparing car body")
-        delay(30)
-        return Part.Body.ChosenBody(body)
+        delay(400)
+        return ChosenBody(body)
     }
 
     private suspend fun finalCompose(
         order: Car,
         sparePartsShot: SpareParts,
-        equipment: Part.CompiledEquipment
+        equipment: CompiledEquipment
     ): OutPut.FinishedCar {
         log("Combining parts")
-        delay(5)
+        delay(100)
         return OutPut.FinishedCar(order, sparePartsShot, equipment)
     }
-
 }
