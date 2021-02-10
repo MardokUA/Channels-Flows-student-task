@@ -13,9 +13,11 @@ import kotlinx.coroutines.channels.produce
 @ExperimentalCoroutinesApi
 class CarFactory(private val name: String, private val scope: CoroutineScope) {
 
+    private val carConstructor: CarConstructor = CarConstructor(scope)
+
     // convert this to a producer of completed car orders
-    //TODO: remove method impl and add documentation
-    fun createCar(orders: ReceiveChannel<Car>, carConstructor: CarConstructor) =
+    // TODO: remove method impl and add documentation
+    fun createCar(orders: ReceiveChannel<Car>): ReceiveChannel<OutPut.FinishedCar> =
         scope.produce(CoroutineName(name)) {
             for (order in orders) {
                 log("Processing order: $order")

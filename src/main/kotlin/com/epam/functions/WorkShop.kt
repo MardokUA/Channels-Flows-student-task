@@ -7,11 +7,10 @@ import com.epam.functions.utils.log
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.selects.select
 import kotlin.system.measureTimeMillis
-import kotlinx.coroutines.channels.onReceiveOrNull as onReceiveOrNullExt
 
 
 /**
@@ -34,7 +33,7 @@ Our program should
  * Provide a car
 
  * Tips:
- * Please use channels to synchronise this processes
+ * Please use channels to synchronise this processes.
  */
 
 @kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -47,49 +46,19 @@ fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.ma
         Car(Part.Body.Sedan, Part.Equipment.LowCost),
         Car(Part.Body.Van, Part.Equipment.LowCost)
     )
-    orders.forEach { log(it) }
 
-    val constructMachine = CarConstructor(this)
+    orders.forEach {
+        log(it)
+    }
 
     val t = measureTimeMillis {
-        // orders go into either car channel a or b (to be processed by one of the two constructors)
-        // the result of these will get merged to be output here
         val ordersChannel = processOrders(orders)
-        val carChannelA = CarFactory("constructor-1", this).createCar(ordersChannel, constructMachine)
-        val carChannelB = CarFactory("constructor-2", this).createCar(ordersChannel, constructMachine)
-
-        // as of right now there's no 'onReceiveOrClosed' operator so we need to track this manually
-        // if the carChannel[A|B] was closed, then onReceiveOrNull is fired on each loop rather
-        // than suspending
-        // this switches on receive from the two constructors, when an order arrives, we print it here
-        var isConstructorOneActive = true
-        var isConstructorTwoActive = true
-        while (isConstructorOneActive || isConstructorTwoActive) {
-            select<Unit> {
-                if (isConstructorOneActive) {
-                    carChannelA.onReceiveOrNullExt().invoke { v ->
-                        if (carChannelA.isClosedForReceive) {
-                            isConstructorOneActive = false
-                        }
-                        if (v != null) {
-                            log("Provided: $v")
-                        }
-                    }
-                }
-                if (isConstructorTwoActive) {
-                    carChannelA.onReceiveOrNullExt().invoke { v ->
-                        if (carChannelB.isClosedForReceive) {
-                            isConstructorTwoActive = false
-                        }
-                        if (v != null) {
-                            log("Provided: $v")
-                        }
-                    }
-                }
-            }
+        val factory = CarFactory("constructor-1", this)
+        factory.createCar(ordersChannel).consumeEach {
+            log("Provided: $it")
         }
-        constructMachine.shutdown()
     }
+
     println("Execution time: $t ms")
 }
 
@@ -97,5 +66,5 @@ fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.ma
 @ExperimentalCoroutinesApi
 private fun CoroutineScope.processOrders(orders: List<Car>) =
     produce(CoroutineName("orderDesk")) {
-        for (o in orders) send(o)
+        for (order in orders) send(order)
     }
