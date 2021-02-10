@@ -4,16 +4,18 @@ import com.epam.functions.task1.data.Part
 import com.epam.functions.task1.data.SpareParts
 import com.epam.functions.task1.factory.ChosenBody
 import com.epam.functions.task1.factory.CompiledEquipment
-import com.epam.functions.task1.utils.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
-import kotlinx.coroutines.channels.actor
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.selects.select
 
-class CarConstructor(scope: CoroutineScope) : CoroutineScope by scope {
+class CarConstructor(
+    scope: CoroutineScope,
+    var bodyLineOne: SendChannel<PrepareBodyRequest>,
+    var bodyLineTwo: SendChannel<PrepareBodyRequest>,
+    var equipmentLineOne: SendChannel<CombineEquipmentRequest>,
+    var equipmentLineTwo: SendChannel<CombineEquipmentRequest>
+) : CoroutineScope by scope {
 
     data class PrepareBodyRequest(
         val chosenBody: ChosenBody,
@@ -24,42 +26,6 @@ class CarConstructor(scope: CoroutineScope) : CoroutineScope by scope {
         val equipment: Part.Equipment,
         val equipmentChannel: SendChannel<CompiledEquipment>
     )
-
-    private val bodyLineOne: SendChannel<PrepareBodyRequest> = actor {
-        consumeEach {
-            log("work in Body line One")
-            delay(200)
-            it.sparePartsChannel.send(SpareParts(it.chosenBody))
-            it.sparePartsChannel.close()
-        }
-    }
-
-    private val bodyLineTwo: SendChannel<PrepareBodyRequest> = actor {
-        consumeEach {
-            log("work in Body line Two")
-            delay(100)
-            it.sparePartsChannel.send(SpareParts(it.chosenBody))
-            it.sparePartsChannel.close()
-        }
-    }
-
-    private val equipmentLineOne: SendChannel<CombineEquipmentRequest> = actor {
-        consumeEach {
-            log("work in Equipment Line One")
-            delay(200)
-            it.equipmentChannel.send(CompiledEquipment(it.equipment))
-            it.equipmentChannel.close()
-        }
-    }
-
-    private val equipmentLineTwo: SendChannel<CombineEquipmentRequest> = actor {
-        consumeEach {
-            log("work in Equipment Line Two")
-            delay(100)
-            it.equipmentChannel.send(CompiledEquipment(it.equipment))
-            it.equipmentChannel.close()
-        }
-    }
 
     suspend fun combineBody(chosenBody: ChosenBody) = select<SpareParts> {
         val channel = Channel<SpareParts>()

@@ -1,21 +1,28 @@
 package com.epam.functions.task1.factory
 
 import com.epam.functions.task1.CarConstructor
-import com.epam.functions.task1.data.Car
-import com.epam.functions.task1.data.OutPut
-import com.epam.functions.task1.data.Part
-import com.epam.functions.task1.data.SpareParts
+import com.epam.functions.task1.data.*
 import com.epam.functions.task1.utils.log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.produce
 
 @ExperimentalCoroutinesApi
-class CarFactory(private val name: String, private val scope: CoroutineScope) {
+class CarFactory(private val name: String, private val scope: CoroutineScope) : CoroutineScope by scope {
+    val bodyLineOne = bodyLineOne()
+    val bodyLineTwo = bodyLineTwo()
+    val equipmentLineOne = equipmentLineOne()
+    val equipmentLineTwo = equipmentLineTwo()
 
-    private val carConstructor: CarConstructor = CarConstructor(scope)
+    val carConstructor: CarConstructor = CarConstructor(
+        scope = scope,
+        bodyLineOne = bodyLineOne,
+        bodyLineTwo = bodyLineTwo,
+        equipmentLineOne = equipmentLineOne,
+        equipmentLineTwo = equipmentLineTwo
+    )
 
-    // convert this to a producer of completed car orders
+    // producer of completed car orders
     // TODO: remove method impl and add documentation
     fun createCar(orders: ReceiveChannel<Car>): ReceiveChannel<OutPut.FinishedCar> =
         scope.produce(CoroutineName(name)) {
@@ -31,7 +38,7 @@ class CarFactory(private val name: String, private val scope: CoroutineScope) {
             }
         }
 
-    fun shutdown() : Boolean= carConstructor.shutdown()
+    fun shutdown(): Boolean = carConstructor.shutdown()
 
     private suspend fun prepareBody(body: Part.Body): ChosenBody {
         log("Preparing car body")

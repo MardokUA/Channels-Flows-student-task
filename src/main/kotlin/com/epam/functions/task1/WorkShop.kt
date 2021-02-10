@@ -1,4 +1,4 @@
-package com.epam.functions
+package com.epam.functions.task1
 
 import com.epam.functions.task1.data.Car
 import com.epam.functions.task1.data.Part
@@ -21,8 +21,8 @@ import kotlin.system.measureTimeMillis
 
 Our workshop must have:
  * car factory ([CarFactory])
- * 2 body lines //TODO add body line class or file with appropriate name
- * 2 equipment lines //TODO add body line class or file with appropriate name
+ * 2 body ([BodyLines])
+ * 2 equipment lines  ([EquipmentLines])
 
 Our program should
  * Take an order
@@ -38,7 +38,7 @@ Our program should
  */
 
 @kotlinx.coroutines.ExperimentalCoroutinesApi
-fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.main")) {
+fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.task1.main")) {
     val orders = listOf(
         Car(Part.Body.Sedan, Part.Equipment.Premium),
         Car(Part.Body.SportCar, Part.Equipment.Family),
@@ -66,7 +66,7 @@ fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.ma
     println("Execution time: $t ms")
 }
 
-// convert this to a producer of orders
+//  producer of orders
 // TODO: remove method impl and add documentation
 @ExperimentalCoroutinesApi
 private fun CoroutineScope.processOrders(orders: List<Car>) =
