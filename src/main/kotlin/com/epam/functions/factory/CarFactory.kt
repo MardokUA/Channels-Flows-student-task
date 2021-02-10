@@ -21,11 +21,13 @@ class CarFactory(private val name: String, private val scope: CoroutineScope) {
         scope.produce(CoroutineName(name)) {
             for (order in orders) {
                 log("Processing order: $order")
-                val preparedBody = prepareBody(order.body())
-                val bodyDeferred = async { carConstructor.combineBody(preparedBody) }
-                val equipmentDeferred = async { carConstructor.combineEquipment(order.equipment()) }
-                val finalCompose = finalCompose(order, bodyDeferred.await(), equipmentDeferred.await())
-                send(finalCompose)
+                coroutineScope {
+                    val preparedBody = prepareBody(order.body())
+                    val bodyDeferred = async { carConstructor.combineBody(preparedBody) }
+                    val equipmentDeferred = async { carConstructor.combineEquipment(order.equipment()) }
+                    val finalCompose = finalCompose(order, bodyDeferred.await(), equipmentDeferred.await())
+                    send(finalCompose)
+                }
             }
         }
 

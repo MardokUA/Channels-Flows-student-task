@@ -20,9 +20,9 @@ import kotlin.system.measureTimeMillis
  * And there is **order desk**, which collects the orders and starts the whole process.
 
 Our workshop must have:
- * 2 car factories
- * 2 body lines
- * 2 equipment lines
+ * car factory ([CarFactory])
+ * 2 body lines //TODO add body line class or file with appropriate name
+ * 2 equipment lines //TODO add body line class or file with appropriate name
 
 Our program should
  * Take an order
@@ -34,6 +34,7 @@ Our program should
 
  * Tips:
  * Please use channels to synchronise this processes.
+ * Add time measurement
  */
 
 @kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -51,6 +52,7 @@ fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.ma
         log(it)
     }
 
+    // TODO: remove method impl and add documentation
     val t = measureTimeMillis {
         val ordersChannel = processOrders(orders)
         val factory = CarFactory("constructor-1", this)
@@ -63,6 +65,7 @@ fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.ma
 }
 
 // convert this to a producer of orders
+// TODO: remove method impl and add documentation
 @ExperimentalCoroutinesApi
 private fun CoroutineScope.processOrders(orders: List<Car>) =
     produce(CoroutineName("orderDesk")) {
