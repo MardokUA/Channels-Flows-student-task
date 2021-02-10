@@ -56,13 +56,13 @@ fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.ma
                 if (isConstructorOneActive) {
                     carChannelA.onReceiveOrNullExt().invoke { v ->
                         if (carChannelA.isClosedForReceive) isConstructorOneActive = false
-                        if (v != null) log("Provided: $v")
+                        if (v != null) log("Provided 1 : $v")
                     }
                 }
                 if (isConstructorTwoActive) {
-                    carChannelA.onReceiveOrNullExt().invoke { v ->
+                    carChannelB.onReceiveOrNullExt().invoke { v ->
                         if (carChannelB.isClosedForReceive) isConstructorTwoActive = false
-                        if (v != null) log("Provided: $v")
+                        if (v != null) log("Provided 2 : $v")
                     }
                 }
             }
