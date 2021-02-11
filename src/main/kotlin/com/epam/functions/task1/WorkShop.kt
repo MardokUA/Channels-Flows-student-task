@@ -55,7 +55,7 @@ fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.ta
     // TODO: remove method impl and add documentation
     val t = measureTimeMillis {
         val ordersChannel = processOrders(orders)
-        val factory = CarFactory("constructor-1", this)
+        val factory = CarFactory(this)
         factory.createCar(ordersChannel).consumeEach {
             log("Provided: $it")
         }

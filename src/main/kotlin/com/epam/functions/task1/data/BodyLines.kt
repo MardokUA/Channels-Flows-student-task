@@ -7,27 +7,14 @@ import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.delay
+import kotlin.random.Random
 
 // This function launches a new bodyLineOne actor
-fun CoroutineScope.bodyLineOne(): SendChannel<CarConstructor.PrepareBodyRequest> {
+fun CoroutineScope.createBodyLine(name: String): SendChannel<CarConstructor.PrepareBodyRequest> {
     return actor {
-
         consumeEach {
-            log("work in Body line One")
-            delay(200)
-            it.sparePartsChannel.send(SpareParts(it.chosenBody))
-            it.sparePartsChannel.close()
-        }
-    }
-}
-
-// This function launches a new bodyLineOne actor
-fun CoroutineScope.bodyLineTwo(): SendChannel<CarConstructor.PrepareBodyRequest> {
-    return actor {
-
-        consumeEach {
-            log("work in Body line Two")
-            delay(100)
+            log("work in $name")
+            delay(Random.nextLong(100, 500))
             it.sparePartsChannel.send(SpareParts(it.chosenBody))
             it.sparePartsChannel.close()
         }

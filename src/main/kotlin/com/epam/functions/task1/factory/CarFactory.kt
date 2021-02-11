@@ -1,40 +1,31 @@
 package com.epam.functions.task1.factory
 
 import com.epam.functions.task1.CarConstructor
-import com.epam.functions.task1.data.*
+import com.epam.functions.task1.data.Car
+import com.epam.functions.task1.data.OutPut
+import com.epam.functions.task1.data.Part
+import com.epam.functions.task1.data.SpareParts
 import com.epam.functions.task1.utils.log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.produce
 
 @ExperimentalCoroutinesApi
-class CarFactory(private val name: String, private val scope: CoroutineScope) : CoroutineScope by scope {
-    val bodyLineOne = bodyLineOne()
-    val bodyLineTwo = bodyLineTwo()
-    val equipmentLineOne = equipmentLineOne()
-    val equipmentLineTwo = equipmentLineTwo()
+class CarFactory(private val scope: CoroutineScope) : CoroutineScope by scope {
 
-    val carConstructor: CarConstructor = CarConstructor(
-        scope = scope,
-        bodyLineOne = bodyLineOne,
-        bodyLineTwo = bodyLineTwo,
-        equipmentLineOne = equipmentLineOne,
-        equipmentLineTwo = equipmentLineTwo
-    )
+    private val carConstructor: CarConstructor = CarConstructor.createInstance(scope)
 
     // producer of completed car orders
     // TODO: remove method impl and add documentation
     fun createCar(orders: ReceiveChannel<Car>): ReceiveChannel<OutPut.FinishedCar> =
-        scope.produce(CoroutineName(name)) {
+        scope.produce(CoroutineName(NAME)) {
             for (order in orders) {
                 log("Processing order: $order")
-                coroutineScope {
-                    val preparedBody = prepareBody(order.body())
-                    val bodyDeferred = async { carConstructor.combineBody(preparedBody) }
-                    val equipmentDeferred = async { carConstructor.combineEquipment(order.equipment()) }
-                    val finalCompose = finalCompose(order, bodyDeferred.await(), equipmentDeferred.await())
-                    send(finalCompose)
-                }
+                val preparedBody = prepareBody(order.body())
+                val bodyDeferred = async { carConstructor.combineBody(preparedBody) }
+                val equipmentDeferred = async { carConstructor.combineEquipment(order.equipment()) }
+                val finalCompose = finalCompose(order, bodyDeferred.await(), equipmentDeferred.await())
+                send(finalCompose)
             }
         }
 
@@ -54,5 +45,9 @@ class CarFactory(private val name: String, private val scope: CoroutineScope) : 
         log("Combining parts")
         delay(100)
         return OutPut.FinishedCar(order, sparePartsShot, equipment)
+    }
+
+    companion object {
+        private const val NAME = "Car factory"
     }
 }

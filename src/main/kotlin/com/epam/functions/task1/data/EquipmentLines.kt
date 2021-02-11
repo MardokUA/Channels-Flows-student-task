@@ -8,27 +8,14 @@ import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.delay
+import kotlin.random.Random
 
 // This function launches a new equipmentLineOne actor
-fun CoroutineScope.equipmentLineOne(): SendChannel<CarConstructor.CombineEquipmentRequest> {
+fun CoroutineScope.equipmentLine(name: String): SendChannel<CarConstructor.CombineEquipmentRequest> {
     return actor {
-
         consumeEach {
-            log("work in Equipment Line One")
-            delay(200)
-            it.equipmentChannel.send(CompiledEquipment(it.equipment))
-            it.equipmentChannel.close()
-        }
-    }
-}
-
-// This function launches a new equipmentLineTwo actor
-fun CoroutineScope.equipmentLineTwo(): SendChannel<CarConstructor.CombineEquipmentRequest> {
-    return actor {
-
-        consumeEach {
-            log("work in Equipment Line One")
-            delay(200)
+            log("work in $name")
+            delay(Random.nextLong(100, 500))
             it.equipmentChannel.send(CompiledEquipment(it.equipment))
             it.equipmentChannel.close()
         }

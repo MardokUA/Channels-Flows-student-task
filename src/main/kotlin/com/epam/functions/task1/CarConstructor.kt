@@ -2,6 +2,8 @@ package com.epam.functions.task1
 
 import com.epam.functions.task1.data.Part
 import com.epam.functions.task1.data.SpareParts
+import com.epam.functions.task1.data.createBodyLine
+import com.epam.functions.task1.data.equipmentLine
 import com.epam.functions.task1.factory.ChosenBody
 import com.epam.functions.task1.factory.CompiledEquipment
 import kotlinx.coroutines.CoroutineScope
@@ -9,12 +11,12 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.selects.select
 
-class CarConstructor(
+class CarConstructor private constructor(
     scope: CoroutineScope,
-    var bodyLineOne: SendChannel<PrepareBodyRequest>,
-    var bodyLineTwo: SendChannel<PrepareBodyRequest>,
-    var equipmentLineOne: SendChannel<CombineEquipmentRequest>,
-    var equipmentLineTwo: SendChannel<CombineEquipmentRequest>
+    val bodyLineOne: SendChannel<PrepareBodyRequest>,
+    val bodyLineTwo: SendChannel<PrepareBodyRequest>,
+    val equipmentLineOne: SendChannel<CombineEquipmentRequest>,
+    val equipmentLineTwo: SendChannel<CombineEquipmentRequest>
 ) : CoroutineScope by scope {
 
     data class PrepareBodyRequest(
@@ -58,5 +60,17 @@ class CarConstructor(
                 equipmentLineTwo.isClosedForSend and
                 bodyLineOne.isClosedForSend and
                 bodyLineTwo.isClosedForSend
+    }
+
+    companion object {
+        fun createInstance(scope: CoroutineScope): CarConstructor {
+            return CarConstructor(
+                scope = scope,
+                bodyLineOne = scope.createBodyLine("Body line 1"),
+                bodyLineTwo = scope.createBodyLine("Body line 2"),
+                equipmentLineOne = scope.equipmentLine("Equipment line 1"),
+                equipmentLineTwo = scope.equipmentLine("Equipment line 2")
+            )
+        }
     }
 }
