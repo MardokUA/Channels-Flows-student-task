@@ -29,8 +29,6 @@ class CarFactory(private val scope: CoroutineScope) : CoroutineScope by scope {
             }
         }
 
-    fun shutdown(): Boolean = carConstructor.shutdown()
-
     private suspend fun prepareBody(body: Part.Body): ChosenBody {
         log("Preparing car body")
         delay(400)

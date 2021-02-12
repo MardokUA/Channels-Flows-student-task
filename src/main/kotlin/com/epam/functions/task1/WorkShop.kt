@@ -1,16 +1,15 @@
 package com.epam.functions.task1
 
+import com.epam.functions.task1.CarConstructor.Companion.createInstance
 import com.epam.functions.task1.data.Car
 import com.epam.functions.task1.data.Part
 import com.epam.functions.task1.factory.CarFactory
 import com.epam.functions.task1.utils.log
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.produce
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.selects.select
 import kotlin.system.measureTimeMillis
+import kotlinx.coroutines.channels.onReceiveOrNull as onReceiveOrNullExt
 
 
 /**
@@ -45,6 +44,7 @@ fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.ta
         Car(Part.Body.Sedan, Part.Equipment.LowCost),
         Car(Part.Body.Van, Part.Equipment.Premium),
         Car(Part.Body.Sedan, Part.Equipment.LowCost),
+        Car(Part.Body.Van, Part.Equipment.LowCost),
         Car(Part.Body.Van, Part.Equipment.LowCost)
     )
 
@@ -53,16 +53,39 @@ fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.ta
     }
 
     // TODO: remove method impl and add documentation
+    val constructMachine = createInstance(this)
+    val carFactory = CarFactory(this)
     val t = measureTimeMillis {
+        // orders go into either car channel a or b (to be processed by one of the two constructors)
+        // the result of these will get merged to be output here
         val ordersChannel = processOrders(orders)
-        val factory = CarFactory(this)
-        factory.createCar(ordersChannel).consumeEach {
-            log("Provided: $it")
-        }
-        val isShutdown = factory.shutdown()
-        log("Factory is shutdown: $isShutdown")
-    }
+        val carChannelA = carFactory.createCar(ordersChannel)
+        val carChannelB = carFactory.createCar(ordersChannel)
 
+        // as of right now there's no 'onReceiveOrClosed' operator so we need to track this manually
+        // if the carChannel[A|B] was closed, then onReceiveOrNull is fired on each loop rather
+        // than suspending
+        // this switches on receive from the two constructors, when an order arrives, we print it here
+        var isConstructorOneActive = true
+        var isConstructorTwoActive = true
+        while (isConstructorOneActive || isConstructorTwoActive) {
+            select<Unit> {
+                if (isConstructorOneActive) {
+                    carChannelA.onReceiveOrNullExt().invoke { v ->
+                        if (carChannelA.isClosedForReceive) isConstructorOneActive = false
+                        if (v != null) log("Provided 1 : $v")
+                    }
+                }
+                if (isConstructorTwoActive) {
+                    carChannelB.onReceiveOrNullExt().invoke { v ->
+                        if (carChannelB.isClosedForReceive) isConstructorTwoActive = false
+                        if (v != null) log("Provided 2 : $v")
+                    }
+                }
+            }
+        }
+        constructMachine.shutdown()
+    }
     println("Execution time: $t ms")
 }
 

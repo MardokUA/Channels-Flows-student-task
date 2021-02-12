@@ -6,12 +6,13 @@ import com.epam.functions.task1.data.createBodyLine
 import com.epam.functions.task1.data.equipmentLine
 import com.epam.functions.task1.factory.ChosenBody
 import com.epam.functions.task1.factory.CompiledEquipment
+import com.epam.functions.task1.utils.log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.selects.select
 
-class CarConstructor private constructor(
+class CarConstructor constructor(
     scope: CoroutineScope,
     val bodyLineOne: SendChannel<PrepareBodyRequest>,
     val bodyLineTwo: SendChannel<PrepareBodyRequest>,
@@ -33,9 +34,11 @@ class CarConstructor private constructor(
         val channel = Channel<SpareParts>()
         val req = PrepareBodyRequest(chosenBody, channel)
         bodyLineOne.onSend(req) {
+            log("combineBody bodyLineOne")
             channel.receive()
         }
         bodyLineTwo.onSend(req) {
+            log("combineBody bodyLineTwo")
             channel.receive()
         }
     }
@@ -44,9 +47,11 @@ class CarConstructor private constructor(
         val channel = Channel<CompiledEquipment>()
         val req = CombineEquipmentRequest(equipment, channel)
         equipmentLineOne.onSend(req) {
+            log("combineEquipment equipmentLineOne")
             channel.receive()
         }
         equipmentLineTwo.onSend(req) {
+            log("combineEquipment equipmentLineTwo")
             channel.receive()
         }
     }
