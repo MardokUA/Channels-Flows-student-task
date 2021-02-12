@@ -24,7 +24,7 @@ Our workshop must have:
  * 2 equipment lines  ([EquipmentLines])
 
 Our program should
- * Take an order
+ * Take an order (in parallel)
  * Pick Constructor
  * Create body  (in parallel)
  * Create Equipment (in parallel)
