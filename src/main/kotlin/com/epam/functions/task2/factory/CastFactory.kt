@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.asFlow
 
 class CastFactory : ContentFactory<Cast>() {
 
-    override val nameList: Array<String> = arrayOf(
+    override val dataList: Array<String> = arrayOf(
         "Adriana Ferdynand",
         "Walenty Kuba",
         "Jarek Franciszka",
@@ -21,10 +21,10 @@ class CastFactory : ContentFactory<Cast>() {
     )
 
     override fun provideContent(): Flow<Cast> {
-        return List(nameList.size) { index ->
+        return List(dataList.size) { index ->
             Cast(
-                name = nameList[index].split(" ").first(),
-                surname = nameList[index].split(" ").last(),
+                name = dataList[index].split(" ").first(),
+                surname = dataList[index].split(" ").last(),
                 filmCount = index + 1
             )
         }.asFlow()

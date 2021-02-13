@@ -4,36 +4,28 @@ import com.epam.functions.task2.content.Movie
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import java.util.*
-import kotlin.random.Random
 
-class MovieFactory : ContentFactory<Movie>(){
+class MovieFactory : ContentFactory<Movie>() {
 
-    override val nameList: Array<String> = arrayOf(
-        "The Seven Samurai",
-        "Bonnie and Clyde",
-        "Reservoir Dogs",
-        "Airplane!",
-        "Doctor Zhivago",
-        "Rocky",
-        "Memento",
-        "Braveheart",
-        "Beauty and the Beast",
-        "Seven",
+    override val dataList: Array<Pair<String, Long>> = arrayOf(
+        "Harry Potter and the Sorcerer's Stone" to 1005861600000,
+        "28 Weeks Later" to 1178830800000,
+        "Beowulf" to 1195596000000,
+        "The Seven Deadly Sins" to 1416088800000,
+        "Die Hard" to 585345600000,
+        "Rocky" to 217371600000,
+        "Doctor Strange" to 1477342800000,
+        "Braveheart" to 801262800000,
+        "Beauty and the Beast" to 1487800800000,
+        "Seven" to 811717200000,
     )
 
     override fun provideContent(): Flow<Movie> {
-        return List(nameList.size) { index ->
+        return List(dataList.size) { index ->
             Movie(
-                label = nameList[index],
-                releaseYear = Date(createRandomYear())
+                label = dataList[index].first,
+                releaseYear = Date(dataList[index].second)
             )
         }.asFlow()
-    }
-
-    private fun createRandomYear() = Random.nextLong(YEAR_1976, YEAR_2020)
-
-    companion object {
-        private const val YEAR_1976 = 186526800000L
-        private const val YEAR_2020 = 1575064800000L
     }
 }

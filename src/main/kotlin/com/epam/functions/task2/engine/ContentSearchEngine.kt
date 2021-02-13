@@ -18,11 +18,11 @@ class ContentSearchEngine(
 ) : SearchEngine {
 
     override suspend fun search(query: String): Flow<Asset> {
-        return mergeAll().filter { it.getTitle().equals(query, true) }
+        return mergeAll().filter { it.getPoster().contains(query, true) }
     }
 
     override suspend fun search(query: String, type: Asset.Type): Flow<Asset> {
-        return mergeAll().filter { it.type == type && it.getTitle().contains(query) }
+        return mergeAll().filter { it.type == type && it.getPoster().contains(query) }
     }
 
     private fun mergeAll() = merge(

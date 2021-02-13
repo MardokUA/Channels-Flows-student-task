@@ -6,23 +6,23 @@ import kotlinx.coroutines.flow.asFlow
 
 class TvChannelFactory : ContentFactory<TvChannel>() {
 
-    override val nameList: Array<String> = arrayOf(
+    override val dataList: Array<String> = arrayOf(
         "1+1",
-        "Inter",
         "Football 1",
-        "Zik",
+        "Inter",
+        "STB",
         "5 channel",
         "ICTV",
         "National Geographic",
         "Animal Planet",
-        "STB",
+        "Ukraine HD",
         "History HD",
     )
 
     override fun provideContent(): Flow<TvChannel> {
-        return List(nameList.size) { index ->
+        return List(dataList.size) { index ->
             TvChannel(
-                label = nameList[index],
+                label = dataList[index],
                 number = index + 1
             )
         }.asFlow()
