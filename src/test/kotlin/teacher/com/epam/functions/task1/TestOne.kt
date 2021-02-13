@@ -1,6 +1,6 @@
 @file:Suppress("TestFunctionName")
 
-package teacher.com.epam.functions
+package teacher.com.epam.functions.task1
 
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -1,53 +1,58 @@
 package com.epam.functions.task1.factory
 
-import com.epam.functions.task1.CarConstructor
-import com.epam.functions.task1.data.Car
-import com.epam.functions.task1.data.OutPut
-import com.epam.functions.task1.data.Part
-import com.epam.functions.task1.data.SpareParts
+import com.epam.functions.task1.PrepareBodyRequest
+import com.epam.functions.task1.PrepareEquipmentRequest
+import com.epam.functions.task1.combineBody
+import com.epam.functions.task1.combineEquipment
+import com.epam.functions.task1.data.*
 import com.epam.functions.task1.utils.log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.produce
 
+const val NAME = "Car factory"
+
+// producer of completed car orders
+// TODO: remove method impl and add documentation
 @ExperimentalCoroutinesApi
-class CarFactory(private val scope: CoroutineScope) : CoroutineScope by scope {
-
-    private val carConstructor: CarConstructor = CarConstructor.createInstance(scope)
-
-    // producer of completed car orders
-    // TODO: remove method impl and add documentation
-    fun createCar(orders: ReceiveChannel<Car>): ReceiveChannel<OutPut.FinishedCar> =
-        scope.produce(CoroutineName(NAME)) {
-            for (order in orders) {
-                log("Processing order: $order")
-                val preparedBody = prepareBody(order.body())
-                val bodyDeferred = async { carConstructor.combineBody(preparedBody) }
-                val equipmentDeferred = async { carConstructor.combineEquipment(order.equipment()) }
-                val finalCompose = finalCompose(order, bodyDeferred.await(), equipmentDeferred.await())
-                send(finalCompose)
-            }
+fun createCar(
+    orders: ReceiveChannel<Car>, scope: CoroutineScope,
+    bodyLineOne: SendChannel<PrepareBodyRequest>,
+    bodyLineTwo: SendChannel<PrepareBodyRequest>,
+    equipmentLineOne: SendChannel<PrepareEquipmentRequest>,
+    equipmentLineTwo: SendChannel<PrepareEquipmentRequest>
+): ReceiveChannel<OutPut.FinishedCar> =
+    scope.produce(CoroutineName(NAME)) {
+        for (order in orders) {
+            log("Processing order: $order")
+            val preparedBody = prepareBody(order.body())
+            val preparedEquipment = preparedEquipment(order.equipment())
+            val bodyDeferred = async { combineBody(preparedBody, bodyLineOne, bodyLineTwo) }
+            val equipmentDeferred = async { combineEquipment(preparedEquipment, equipmentLineOne, equipmentLineTwo) }
+            val finalCompose = finalCompose(order, bodyDeferred.await(), equipmentDeferred.await())
+            send(finalCompose)
         }
-
-    fun shutdown(): Boolean = carConstructor.shutdown()
-
-    private suspend fun prepareBody(body: Part.Body): ChosenBody {
-        log("Preparing car body")
-        delay(400)
-        return ChosenBody(body)
     }
 
-    private suspend fun finalCompose(
-        order: Car,
-        sparePartsShot: SpareParts,
-        equipment: CompiledEquipment
-    ): OutPut.FinishedCar {
-        log("Combining parts")
-        delay(100)
-        return OutPut.FinishedCar(order, sparePartsShot, equipment)
-    }
+private suspend fun prepareBody(body: Part.Body): ChosenBody {
+    log("Preparing car body")
+    delay(400)
+    return ChosenBody(body)
+}
 
-    companion object {
-        private const val NAME = "Car factory"
-    }
+private suspend fun preparedEquipment(equipment: Part.Equipment): ChosenEquipment {
+    log("Preparing car body")
+    delay(400)
+    return ChosenEquipment(equipment)
+}
+
+private suspend fun finalCompose(
+    order: Car,
+    bodyPartsShot: BodyParts,
+    equipment: EquipmentParts
+): OutPut.FinishedCar {
+    log("Combining parts")
+    delay(100)
+    return OutPut.FinishedCar(order, bodyPartsShot, equipment)
 }
