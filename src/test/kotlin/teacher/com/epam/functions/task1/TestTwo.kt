@@ -1,6 +1,6 @@
 @file:Suppress("RemoveExplicitTypeArguments", "TestFunctionName")
 
-package teacher.com.epam.functions
+package teacher.com.epam.functions.task1
 
 
 import org.junit.Test

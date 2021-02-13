@@ -1,7 +1,7 @@
 package com.epam.functions.task1.data
 
 import com.epam.functions.task1.factory.ChosenBody
-import com.epam.functions.task1.factory.CompiledEquipment
+import com.epam.functions.task1.factory.ChosenEquipment
 import com.epam.functions.task1.utils.format
 
 sealed class Part {
@@ -45,7 +45,8 @@ sealed class Part {
     }
 }
 
-data class SpareParts(val body: ChosenBody)
+data class BodyParts(val body: ChosenBody)
+data class EquipmentParts(val body: ChosenEquipment)
 
 data class Car(val body: Part.Body, val equipment: Part.Equipment) {
 
@@ -61,7 +62,7 @@ data class Car(val body: Part.Body, val equipment: Part.Equipment) {
 sealed class OutPut {
     data class FinishedCar(
         val order: Car,
-        val sparePartsShot: SpareParts,
-        val compiledEquipment: CompiledEquipment
+        val bodyPartsShot: BodyParts,
+        val chosenEquipment: EquipmentParts
     ) : OutPut()
 }

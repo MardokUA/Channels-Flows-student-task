@@ -1,9 +1,10 @@
 package com.epam.functions.task1
 
-import com.epam.functions.task1.CarConstructor.Companion.createInstance
 import com.epam.functions.task1.data.Car
 import com.epam.functions.task1.data.Part
-import com.epam.functions.task1.factory.CarFactory
+import com.epam.functions.task1.data.createBodyLine
+import com.epam.functions.task1.data.equipmentLine
+import com.epam.functions.task1.factory.createCar
 import com.epam.functions.task1.utils.log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.produce
@@ -53,15 +54,32 @@ fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.ta
         log(it)
     }
 
+
     // TODO: remove method impl and add documentation
-    val constructMachine = createInstance(this)
-    val carFactory = CarFactory(this)
     val t = measureTimeMillis {
+        val bodyLineOne = this.createBodyLine("Body line 1")
+        val bodyLineTwo = this.createBodyLine("Body line 2")
+        val equipmentLineOne = this.equipmentLine("Equipment line 1")
+        val equipmentLineTwo = this.equipmentLine("Equipment line 2")
         // orders go into either car channel a or b (to be processed by one of the two constructors)
         // the result of these will get merged to be output here
         val ordersChannel = processOrders(orders)
-        val carChannelA = carFactory.createCar(ordersChannel)
-        val carChannelB = carFactory.createCar(ordersChannel)
+        val carChannelA = createCar(
+            orders = ordersChannel,
+            scope = this,
+            bodyLineOne = bodyLineOne,
+            bodyLineTwo = bodyLineTwo,
+            equipmentLineOne = equipmentLineOne,
+            equipmentLineTwo = equipmentLineTwo
+        )
+        val carChannelB = createCar(
+            orders = ordersChannel,
+            scope = this,
+            bodyLineOne = bodyLineOne,
+            bodyLineTwo = bodyLineTwo,
+            equipmentLineOne = equipmentLineOne,
+            equipmentLineTwo = equipmentLineTwo
+        )
 
         // as of right now there's no 'onReceiveOrClosed' operator so we need to track this manually
         // if the carChannel[A|B] was closed, then onReceiveOrNull is fired on each loop rather
@@ -85,7 +103,13 @@ fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.ta
                 }
             }
         }
-        constructMachine.shutdown()
+        val isShotDown = shutdown(
+            bodyLineOne = bodyLineOne,
+            bodyLineTwo = bodyLineTwo,
+            equipmentLineOne = equipmentLineOne,
+            equipmentLineTwo = equipmentLineTwo
+        )
+        log("all channels are shotDown $isShotDown")
     }
     println("Execution time: $t ms")
 }
