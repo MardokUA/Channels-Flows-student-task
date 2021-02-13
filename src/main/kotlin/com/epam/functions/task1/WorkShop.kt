@@ -20,12 +20,13 @@ import kotlinx.coroutines.channels.onReceiveOrNull as onReceiveOrNullExt
 
 Our workshop must have:
  * car factory ([CarFactory])
- * 2 body ([BodyLines])
+ * 2 constructor teams
+ * 2 body lines ([BodyLines])
  * 2 equipment lines  ([EquipmentLines])
 
 Our program should
- * Take an order (in parallel)
- * Pick Constructor
+ * Take an order from singe order list
+ * Pick Constructor (in parallel)
  * Create body  (in parallel)
  * Create Equipment (in parallel)
  * Combine the body and equipment
