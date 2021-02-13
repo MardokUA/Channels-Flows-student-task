@@ -16,7 +16,6 @@ fun CoroutineScope.createBodyLine(name: String): SendChannel<PrepareBodyRequest>
             log("work in $name")
             delay(Random.nextLong(100, 500))
             it.bodyPartsChannel.send(BodyParts(it.chosenBody))
-            it.bodyPartsChannel.close()
         }
     }
 }

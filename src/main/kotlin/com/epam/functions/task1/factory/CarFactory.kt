@@ -6,18 +6,16 @@ import com.epam.functions.task1.combineBody
 import com.epam.functions.task1.combineEquipment
 import com.epam.functions.task1.data.*
 import com.epam.functions.task1.utils.log
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.produce
-import kotlinx.coroutines.delay
 
 const val NAME = "Car factory"
 
 // producer of completed car orders
 // TODO: remove method impl and add documentation
+@ExperimentalCoroutinesApi
 fun createCar(
     orders: ReceiveChannel<Car>, scope: CoroutineScope,
     bodyLineOne: SendChannel<PrepareBodyRequest>,

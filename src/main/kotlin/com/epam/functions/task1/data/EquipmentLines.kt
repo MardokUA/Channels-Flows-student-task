@@ -16,7 +16,6 @@ fun CoroutineScope.equipmentLine(name: String): SendChannel<PrepareEquipmentRequ
             log("work in $name")
             delay(Random.nextLong(100, 500))
             it.equipmentChannel.send(EquipmentParts(it.equipment))
-            it.equipmentChannel.close()
         }
     }
 }
