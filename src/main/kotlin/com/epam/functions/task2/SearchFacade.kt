@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.toCollection
 class SearchFacade(private val searchEngine: SearchEngine) {
 
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    private val regex: Regex = Regex("(\\\$\\w{3,4}\$)")
+    private val regex: Regex = Regex("(\\?\\w{3,4}\$)")
 
     suspend fun searchContentAsync(rawQuery: String): Deferred<List<Asset>> {
         // try to find type in search request
