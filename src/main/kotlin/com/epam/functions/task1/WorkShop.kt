@@ -15,15 +15,15 @@ import kotlinx.coroutines.channels.onReceiveOrNull as onReceiveOrNullExt
 
 /**
  * Let’s assume that you have a small automated workshop that produces cars on the automation line.
- * But it is not full automated and it should be observed by [CarConstructor].
- * Each machine uses **body line** and **equipment line** to construct a vehicle with [CarFactory].
+ * But it is not full automated and it should be observed by [CarConstructor.kt].
+ * Each machine uses **body line** and **equipment line** to construct a vehicle with [CarFactory.kt].
  * And there is **order desk**, which collects the orders and starts the whole process.
 
 Our workshop must have:
- * car factory ([CarFactory])
+ * car factory ([CarFactory.kt])
  * 2 constructor teams
- * 2 body lines ([BodyLines])
- * 2 equipment lines  ([EquipmentLines])
+ * 2 body lines ([BodyLines.kt])
+ * 2 equipment lines  ([EquipmentLines.kt])
 
 Our program should
  * Take an order from singe order list
@@ -61,8 +61,7 @@ fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.ta
         val bodyLineTwo = this.createBodyLine("Body line 2")
         val equipmentLineOne = this.equipmentLine("Equipment line 1")
         val equipmentLineTwo = this.equipmentLine("Equipment line 2")
-        // orders go into either car channel a or b (to be processed by one of the two constructors)
-        // the result of these will get merged to be output here
+
         val ordersChannel = processOrders(orders)
         val carChannelA = createCar(
             orders = ordersChannel,
@@ -114,7 +113,7 @@ fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.ta
     println("Execution time: $t ms")
 }
 
-//  producer of orders
+//  creates ReceiveChannel to emit orders for constructors teams.
 // TODO: remove method impl and add documentation
 @ExperimentalCoroutinesApi
 private fun CoroutineScope.processOrders(orders: List<Car>) =

@@ -17,7 +17,8 @@ const val NAME = "Car factory"
 // TODO: remove method impl and add documentation
 @ExperimentalCoroutinesApi
 fun createCar(
-    orders: ReceiveChannel<Car>, scope: CoroutineScope,
+    orders: ReceiveChannel<Car>,
+    scope: CoroutineScope,
     bodyLineOne: SendChannel<PrepareBodyRequest>,
     bodyLineTwo: SendChannel<PrepareBodyRequest>,
     equipmentLineOne: SendChannel<PrepareEquipmentRequest>,
@@ -42,17 +43,18 @@ private suspend fun prepareBody(body: Part.Body): ChosenBody {
 }
 
 private suspend fun preparedEquipment(equipment: Part.Equipment): ChosenEquipment {
-    log("Preparing car body")
+    log("Preparing car equipment")
     delay(400)
     return ChosenEquipment(equipment)
 }
 
+// composes provided BodyParts and EquipmentParts to FinishedCar
 private suspend fun finalCompose(
     order: Car,
-    bodyPartsShot: BodyParts,
+    bodyParts: BodyParts,
     equipment: EquipmentParts
 ): OutPut.FinishedCar {
     log("Combining parts")
     delay(100)
-    return OutPut.FinishedCar(order, bodyPartsShot, equipment)
+    return OutPut.FinishedCar(order, bodyParts, equipment)
 }
