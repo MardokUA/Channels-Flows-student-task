@@ -32,8 +32,8 @@ in coroutine context.
 ## Introduction
 
 Just imagine, that _EPAM_ has its own online cinema. It provides access to a lot of video content and other data, which
-are related to this content. **Asset** - is the base abstract entity, which represents our content. And it has three **
-Type**'s - _VOD_ (video on demand), _LIVE_ (streams) and _CREW_ (people, who participated in film making process). So,
+are related to this content. **Asset** - is the base abstract entity, which represents our content. And it has three **Type**'s -
+_VOD_ (video on demand), _LIVE_ (streams) and _CREW_ (people, who participated in film making process). So,
 for example, user can find a film, see small description, take a look on cast and crew and so on. This is just a concept
 in order to help you understand what we a talking about.
 
@@ -48,7 +48,8 @@ searched. Engine MUST be able to:
 * recognize special character in the text and modifies search approach:
     * **?** - indicate the type of content the user is looking for. Could be placed ONLY at the end of the text. For
       example: _Thor 3?VOD_.
-    * **@** - changes the approach to finding matches to **startWith**. For example:
+    * **@** - changes the approach to finding matches to **startWith**. Could be placed ONLY on the beginning of the
+      text For example:
       assets -> [Al Pacino, Pacman], query -> _pac_. Only [Pacman] should be found.
 * depending on the request, the mechanism must search among all content or according to the type specified in the
   request 

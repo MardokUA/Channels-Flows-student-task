@@ -5,7 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface SearchEngine {
 
-    suspend fun search(query: String): Flow<Asset>
-
-    suspend fun search(query: String, type: Asset.Type): Flow<Asset>
+    suspend fun search(query: Query): Flow<Asset>
 }

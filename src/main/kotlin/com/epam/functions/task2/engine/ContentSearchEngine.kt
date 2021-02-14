@@ -17,17 +17,23 @@ class ContentSearchEngine(
     private val castFactory: CastFactory
 ) : SearchEngine {
 
-    override suspend fun search(query: String): Flow<Asset> {
-        return mergeAll().filter { it.getPoster().contains(query, true) }
+    override suspend fun search(query: Query): Flow<Asset> {
+        return query.type
+            .toFlow()
+            .filter { asset -> query.predicate(asset.getPoster(), query.input) }
     }
 
-    override suspend fun search(query: String, type: Asset.Type): Flow<Asset> {
-        return mergeAll().filter { it.type == type && it.getPoster().contains(query) }
+    private fun Asset.Type?.toFlow(): Flow<Asset> {
+        val flow = when (this) {
+            Asset.Type.VOD -> movieFactory.provideContent()
+            Asset.Type.LIVE -> tvChannelFactory.provideContent()
+            Asset.Type.CREW -> castFactory.provideContent()
+            else -> merge(
+                movieFactory.provideContent(),
+                tvChannelFactory.provideContent(),
+                castFactory.provideContent()
+            )
+        }
+        return flow.onEach { delay(100) }
     }
-
-    private fun mergeAll() = merge(
-        movieFactory.provideContent(),
-        tvChannelFactory.provideContent(),
-        castFactory.provideContent()
-    ).onEach { delay(100) }
 }
