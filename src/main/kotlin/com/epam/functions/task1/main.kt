@@ -12,12 +12,12 @@ fun main(args: Array<String>) {
 
 val orders = listOf(
     Car(Part.Body.Sedan, Part.Equipment.Premium),
-//    Car(Part.Body.SportCar, Part.Equipment.Family),
-//    Car(Part.Body.Sedan, Part.Equipment.LowCost),
-//    Car(Part.Body.Van, Part.Equipment.Premium),
-//    Car(Part.Body.Sedan, Part.Equipment.LowCost),
-//    Car(Part.Body.Van, Part.Equipment.LowCost),
-//    Car(Part.Body.Van, Part.Equipment.LowCost)
+    Car(Part.Body.SportCar, Part.Equipment.Family),
+    Car(Part.Body.Sedan, Part.Equipment.LowCost),
+    Car(Part.Body.Van, Part.Equipment.Premium),
+    Car(Part.Body.Sedan, Part.Equipment.LowCost),
+    Car(Part.Body.Van, Part.Equipment.LowCost),
+    Car(Part.Body.Van, Part.Equipment.LowCost)
 )
 
 fun printOrders(orders: List<Car>) {

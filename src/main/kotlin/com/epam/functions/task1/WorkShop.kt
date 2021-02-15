@@ -1,11 +1,13 @@
 package com.epam.functions.task1
 
 import com.epam.functions.task1.data.Car
+import com.epam.functions.task1.data.OutPut
 import com.epam.functions.task1.data.createBodyLine
 import com.epam.functions.task1.data.createEquipmentLine
 import com.epam.functions.task1.factory.createCar
 import com.epam.functions.task1.utils.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.selects.select
 import kotlin.system.measureTimeMillis
@@ -65,29 +67,7 @@ fun startWorkShopWork(orders: List<Car>) = runBlocking(CoroutineName("com.epam.f
             equipmentLineOne = equipmentLineOne,
             equipmentLineTwo = equipmentLineTwo
         )
-
-        // as of right now there's no 'onReceiveOrClosed' operator so we need to track this manually
-        // if the carChannel[A|B] was closed, then onReceiveOrNull is fired on each loop rather
-        // than suspending
-        // this switches on receive from the two constructors, when an order arrives, we print it here
-        var isConstructorOneActive = true
-        var isConstructorTwoActive = true
-        while (isConstructorOneActive || isConstructorTwoActive) {
-            select<Unit> {
-                if (isConstructorOneActive) {
-                    carChannelA.onReceiveOrNullExt().invoke { v ->
-                        if (carChannelA.isClosedForReceive) isConstructorOneActive = false
-                        if (v != null) log("$ProvidedByConstructorTeam1 : $v")
-                    }
-                }
-                if (isConstructorTwoActive) {
-                    carChannelB.onReceiveOrNullExt().invoke { v ->
-                        if (carChannelB.isClosedForReceive) isConstructorTwoActive = false
-                        if (v != null) log("$ProvidedByConstructorTeam2 : $v")
-                    }
-                }
-            }
-        }
+        performOrderByConstructorTeam(carChannelA, carChannelB)
         val isShotDown = shutdown(
             bodyLineOne = bodyLineOne,
             bodyLineTwo = bodyLineTwo,
@@ -97,6 +77,35 @@ fun startWorkShopWork(orders: List<Car>) = runBlocking(CoroutineName("com.epam.f
         log("all channels are shotDown $isShotDown")
     }
     println("Execution time: $t ms")
+}
+
+@ExperimentalCoroutinesApi
+private suspend fun performOrderByConstructorTeam(
+    carChannelA: ReceiveChannel<OutPut.FinishedCar>,
+    carChannelB: ReceiveChannel<OutPut.FinishedCar>
+) {
+    // as of right now there's no 'onReceiveOrClosed' operator so we need to track this manually
+    // if the carChannel[A|B] was closed, then onReceiveOrNull is fired on each loop rather
+    // than suspending
+    // this switches on receive from the two constructors, when an order arrives, we print it here
+    var isConstructorOneActive = true
+    var isConstructorTwoActive = true
+    while (isConstructorOneActive || isConstructorTwoActive) {
+        select<Unit> {
+            if (isConstructorOneActive) {
+                carChannelA.onReceiveOrNullExt().invoke { v ->
+                    if (carChannelA.isClosedForReceive) isConstructorOneActive = false
+                    if (v != null) log("$ProvidedByConstructorTeam1 : $v")
+                }
+            }
+            if (isConstructorTwoActive) {
+                carChannelB.onReceiveOrNullExt().invoke { v ->
+                    if (carChannelB.isClosedForReceive) isConstructorTwoActive = false
+                    if (v != null) log("$ProvidedByConstructorTeam2 : $v")
+                }
+            }
+        }
+    }
 }
 
 //  creates ReceiveChannel to emit orders for constructors teams.
