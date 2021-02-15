@@ -10,7 +10,7 @@ import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 // This function launches a new equipmentLineOne actor
-fun CoroutineScope.equipmentLine(name: String): SendChannel<PrepareEquipmentRequest> {
+fun CoroutineScope.createEquipmentLine(name: String): SendChannel<PrepareEquipmentRequest> {
     return actor {
         consumeEach {
             log("work in $name")

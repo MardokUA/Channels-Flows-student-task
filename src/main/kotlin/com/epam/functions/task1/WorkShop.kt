@@ -1,11 +1,10 @@
 package com.epam.functions.task1
 
 import com.epam.functions.task1.data.Car
-import com.epam.functions.task1.data.Part
 import com.epam.functions.task1.data.createBodyLine
-import com.epam.functions.task1.data.equipmentLine
+import com.epam.functions.task1.data.createEquipmentLine
 import com.epam.functions.task1.factory.createCar
-import com.epam.functions.task1.utils.log
+import com.epam.functions.task1.utils.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.selects.select
@@ -39,28 +38,15 @@ Our program should
  */
 
 @kotlinx.coroutines.ExperimentalCoroutinesApi
-fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.task1.main")) {
-    val orders = listOf(
-        Car(Part.Body.Sedan, Part.Equipment.Premium),
-        Car(Part.Body.SportCar, Part.Equipment.Family),
-        Car(Part.Body.Sedan, Part.Equipment.LowCost),
-        Car(Part.Body.Van, Part.Equipment.Premium),
-        Car(Part.Body.Sedan, Part.Equipment.LowCost),
-        Car(Part.Body.Van, Part.Equipment.LowCost),
-        Car(Part.Body.Van, Part.Equipment.LowCost)
-    )
-
-    orders.forEach {
-        log(it)
-    }
+fun startWorkShopWork(orders: List<Car>) = runBlocking(CoroutineName("com.epam.functions.task1.main")) {
 
 
     // TODO: remove method impl and add documentation
     val t = measureTimeMillis {
-        val bodyLineOne = this.createBodyLine("Body line 1")
-        val bodyLineTwo = this.createBodyLine("Body line 2")
-        val equipmentLineOne = this.equipmentLine("Equipment line 1")
-        val equipmentLineTwo = this.equipmentLine("Equipment line 2")
+        val bodyLineOne = this.createBodyLine(BodyLine1)
+        val bodyLineTwo = this.createBodyLine(BodyLine2)
+        val equipmentLineOne = this.createEquipmentLine(EquipmentLine1)
+        val equipmentLineTwo = this.createEquipmentLine(EquipmentLine2)
 
         val ordersChannel = processOrders(orders)
         val carChannelA = createCar(
@@ -91,13 +77,13 @@ fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.ta
                 if (isConstructorOneActive) {
                     carChannelA.onReceiveOrNullExt().invoke { v ->
                         if (carChannelA.isClosedForReceive) isConstructorOneActive = false
-                        if (v != null) log("Provided by constructor team 1 : $v")
+                        if (v != null) log("$ProvidedByConstructorTeam1 : $v")
                     }
                 }
                 if (isConstructorTwoActive) {
                     carChannelB.onReceiveOrNullExt().invoke { v ->
                         if (carChannelB.isClosedForReceive) isConstructorTwoActive = false
-                        if (v != null) log("Provided by constructor team 2 : $v")
+                        if (v != null) log("$ProvidedByConstructorTeam2 : $v")
                     }
                 }
             }
@@ -117,6 +103,6 @@ fun main(args: Array<String>) = runBlocking(CoroutineName("com.epam.functions.ta
 // TODO: remove method impl and add documentation
 @ExperimentalCoroutinesApi
 private fun CoroutineScope.processOrders(orders: List<Car>) =
-    produce(CoroutineName("orderDesk")) {
+    produce(CoroutineName(orderDesk)) {
         for (order in orders) send(order)
     }

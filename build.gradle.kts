@@ -17,6 +17,7 @@ dependencies {
     implementation(kotlin("reflect"))
     testImplementation(kotlin("test-junit"))
     testImplementation("io.kotlintest:kotlintest-runner-junit4:3.4.2")
+    testImplementation ("io.mockk:mockk:1.10.6")
 }
 
 tasks.test {

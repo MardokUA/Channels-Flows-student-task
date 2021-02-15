@@ -4,7 +4,7 @@ import com.epam.functions.task1.data.BodyParts
 import com.epam.functions.task1.data.EquipmentParts
 import com.epam.functions.task1.factory.ChosenBody
 import com.epam.functions.task1.factory.ChosenEquipment
-import com.epam.functions.task1.utils.log
+import com.epam.functions.task1.utils.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
@@ -34,11 +34,11 @@ suspend fun combineBody(
     val channel = Channel<BodyParts>()
     val req = PrepareBodyRequest(chosenBody, channel)
     bodyLineOne.onSend(req) {
-        log("combineBody bodyLineOne")
+        log(combineBodyBodyLine1)
         channel.receive()
     }
     bodyLineTwo.onSend(req) {
-        log("combineBody bodyLineTwo")
+        log(combineBodyBodyLine2)
         channel.receive()
     }
 }
@@ -54,11 +54,11 @@ suspend fun combineEquipment(
     val channel = Channel<EquipmentParts>()
     val req = PrepareEquipmentRequest(equipment, channel)
     equipmentLineOne.onSend(req) {
-        log("combineEquipment equipmentLineOne")
+        log(combineEquipmentEquipmentLine1)
         channel.receive()
     }
     equipmentLineTwo.onSend(req) {
-        log("combineEquipment equipmentLineTwo")
+        log(combineEquipmentEquipmentLine2)
         channel.receive()
     }
 }
