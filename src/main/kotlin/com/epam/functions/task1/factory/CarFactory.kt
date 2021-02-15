@@ -6,24 +6,25 @@ import com.epam.functions.task1.combineBody
 import com.epam.functions.task1.combineEquipment
 import com.epam.functions.task1.data.*
 import com.epam.functions.task1.utils.log
+import com.epam.functions.task1.utils.name
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.produce
 
-const val NAME = "Car factory"
 
 // producer of completed car orders
 // TODO: remove method impl and add documentation
 @ExperimentalCoroutinesApi
 fun createCar(
-    orders: ReceiveChannel<Car>, scope: CoroutineScope,
+    orders: ReceiveChannel<Car>,
+    scope: CoroutineScope,
     bodyLineOne: SendChannel<PrepareBodyRequest>,
     bodyLineTwo: SendChannel<PrepareBodyRequest>,
     equipmentLineOne: SendChannel<PrepareEquipmentRequest>,
     equipmentLineTwo: SendChannel<PrepareEquipmentRequest>
 ): ReceiveChannel<OutPut.FinishedCar> =
-    scope.produce(CoroutineName(NAME)) {
+    scope.produce(CoroutineName(name)) {
         for (order in orders) {
             log("Processing order: $order")
             val preparedBody = prepareBody(order.body())
@@ -36,23 +37,24 @@ fun createCar(
     }
 
 private suspend fun prepareBody(body: Part.Body): ChosenBody {
-    log("Preparing car body")
+    log("Preparing car body $body")
     delay(400)
     return ChosenBody(body)
 }
 
 private suspend fun preparedEquipment(equipment: Part.Equipment): ChosenEquipment {
-    log("Preparing car body")
+    log("Preparing car equipment $equipment")
     delay(400)
     return ChosenEquipment(equipment)
 }
 
+// composes provided BodyParts and EquipmentParts to FinishedCar
 private suspend fun finalCompose(
     order: Car,
-    bodyPartsShot: BodyParts,
+    bodyParts: BodyParts,
     equipment: EquipmentParts
 ): OutPut.FinishedCar {
-    log("Combining parts")
+    log("Combining parts $bodyParts, $equipment")
     delay(100)
-    return OutPut.FinishedCar(order, bodyPartsShot, equipment)
+    return OutPut.FinishedCar(order, bodyParts, equipment)
 }

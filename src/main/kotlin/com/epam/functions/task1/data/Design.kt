@@ -46,7 +46,8 @@ sealed class Part {
 }
 
 data class BodyParts(val body: ChosenBody)
-data class EquipmentParts(val body: ChosenEquipment)
+
+data class EquipmentParts(val equipment: ChosenEquipment)
 
 data class Car(val body: Part.Body, val equipment: Part.Equipment) {
 
