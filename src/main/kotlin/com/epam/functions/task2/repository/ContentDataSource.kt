@@ -9,10 +9,11 @@ import kotlinx.coroutines.flow.toCollection
 @ExperimentalCoroutinesApi
 class ContentDataSource(
     private val searchApi: SearchApi,
-    private val mapper: QueryMapper
+    private val mapper: QueryMapper,
+    dispatcher: CoroutineDispatcher
 ) : SearchRepository {
 
-    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val scope: CoroutineScope = CoroutineScope(dispatcher)
 
     override suspend fun searchContentAsync(rawInput: String): Deferred<List<Asset>> = scope.async {
         val request = when (val query = mapper.inputToQuery(rawInput)) {

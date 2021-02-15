@@ -25,7 +25,9 @@ class SearchDataSource(
     override suspend fun searchByContains(query: String, type: Asset.Type): Flow<Asset> {
         return type.toFlow()
             .delayOnEach()
-            .filter { it.getPoster().contains(query, true) }
+            .filter {
+                it.getPoster().contains(query, true)
+            }
     }
 
     override suspend fun searchByStartWith(query: String): Flow<Asset> {

@@ -55,7 +55,7 @@ data class TvChannel(
     val number: Int,
     override val type: Type = Type.LIVE
 ) : Asset() {
-    override fun getPoster(): String = "№$number $label"
+    override fun getPoster(): String = "$label (№$number)"
 }
 
 /** Crew example */

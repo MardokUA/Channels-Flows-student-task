@@ -21,8 +21,8 @@ class QueryMapper {
             }
         } else {
             when (type) {
-                null -> Query.RawContains(rawInput)
-                else -> Query.TypedContains(rawInput, type)
+                null -> Query.RawContains(input)
+                else -> Query.TypedContains(input, type)
             }
         }
     }

@@ -9,7 +9,9 @@ import kotlinx.coroutines.Deferred
  */
 //TODO:
 // * add realization, which will interact with SearchApi and returns the result.
-// * your realization should hold reference to [SearchApi] and [QueryMapper]
+// * your realization should hold reference to [SearchApi] and [QueryMapper].
+// * your realization should use it's own CoroutineScope.
+// * your realization should receive CoroutineDispatcher in constructor.
 interface SearchRepository {
 
     suspend fun searchContentAsync(rawInput: String): Deferred<List<Asset>>

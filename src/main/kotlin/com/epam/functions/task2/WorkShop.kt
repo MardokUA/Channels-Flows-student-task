@@ -1,11 +1,7 @@
 package com.epam.functions.task2
 
-import com.epam.functions.task2.api.SearchDataSource
-import com.epam.functions.task2.api.factory.CastFactory
-import com.epam.functions.task2.api.factory.MovieFactory
-import com.epam.functions.task2.api.factory.TvChannelFactory
-import com.epam.functions.task2.repository.ContentDataSource
-import com.epam.functions.task2.repository.mapper.QueryMapper
+import com.epam.functions.task2.repository.SearchRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 
@@ -15,7 +11,7 @@ var isRunning = true
 @kotlinx.coroutines.ExperimentalCoroutinesApi
 fun main() = runBlocking {
 
-    val repository = ContentDataSource(engine, queryMapper)
+    val repository = DependencyProvider.provideRepository(Dispatchers.IO)
 
     println(
         "$TITLE_BORDER " + "Welcome to EPAM Online TV $TITLE_BORDER" +
@@ -34,7 +30,7 @@ fun main() = runBlocking {
 }
 
 @ExperimentalCoroutinesApi
-private suspend fun proceedSearch(query: String, repository: ContentDataSource) {
+private suspend fun proceedSearch(query: String, repository: SearchRepository) {
     println("Start searching...")
     val result = runCatching { repository.searchContentAsync(query.trim()).await() }.getOrNull()
     when {
@@ -53,14 +49,3 @@ private fun proceedExit() {
 }
 
 private fun String.isEndProgram(): Boolean = this.equals("exit", ignoreCase = true)
-
-private val queryMapper
-    get() = QueryMapper()
-
-@ExperimentalCoroutinesApi
-private val engine
-    get() = SearchDataSource(
-        movieFactory = MovieFactory(),
-        tvChannelFactory = TvChannelFactory(),
-        castFactory = CastFactory()
-    )
