@@ -1,4 +1,4 @@
-package com.epam.functions.task2.content
+package com.epam.functions.task2.api
 
 import java.text.SimpleDateFormat
 import java.util.*
@@ -17,12 +17,14 @@ abstract class Asset {
         VOD,
 
         /**
-         * Video content, which are currently streaming ont the server (tv channels, podcasts, e.t.c).
+         * Video content, which are currently streaming ont the server
+         * (tv channels, podcasts, e.t.c).
          */
         LIVE,
 
         /**
-         * All people, who are participated in video making process (actors, director, operator e.t.c).
+         * All people, who are participated in video making process
+         * (actors, director, operator e.t.c).
          */
         CREW
     }
@@ -31,10 +33,10 @@ abstract class Asset {
 
     /**
      * Title of the asset, which holds all neccessary information
-     * TIP: should be used in [com.epam.functions.task2.engine.SearchEngine] to match search query.
+     * TIP: should be used in [com.epam.functions.task2.api.SearchApi] to match search query.
      * */
-    abstract fun getTitle(): String
     abstract fun getPoster(): String
+
     override fun toString(): String = getPoster()
 }
 
@@ -44,7 +46,6 @@ data class Movie(
     val releaseYear: Date,
     override val type: Type = Type.VOD
 ) : Asset() {
-    override fun getTitle(): String = label
     override fun getPoster(): String = "$label (${SimpleDateFormat("dd.MM.yyyy").format(releaseYear)})"
 }
 
@@ -54,7 +55,6 @@ data class TvChannel(
     val number: Int,
     override val type: Type = Type.LIVE
 ) : Asset() {
-    override fun getTitle(): String = label
     override fun getPoster(): String = "№$number $label"
 }
 
@@ -65,6 +65,5 @@ data class Cast(
     val filmCount: Int,
     override val type: Type = Type.CREW
 ) : Asset() {
-    override fun getTitle(): String = "$name $surname"
-    override fun getPoster(): String = "${getTitle()} ($filmCount films)"
+    override fun getPoster(): String = "$name $surname ($filmCount films)"
 }

@@ -1,9 +1,8 @@
-package com.epam.functions.task2.factory
+package com.epam.functions.task2.api.factory
 
-import com.epam.functions.task2.content.Cast
+import com.epam.functions.task2.api.Cast
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
-
 
 class CastFactory : ContentFactory<Cast>() {
 

@@ -1,50 +1,44 @@
 package com.epam.functions.task2
 
-import com.epam.functions.task2.engine.ContentSearchEngine
-import com.epam.functions.task2.factory.CastFactory
-import com.epam.functions.task2.factory.MovieFactory
-import com.epam.functions.task2.factory.TvChannelFactory
+import com.epam.functions.task2.api.SearchDataSource
+import com.epam.functions.task2.api.factory.CastFactory
+import com.epam.functions.task2.api.factory.MovieFactory
+import com.epam.functions.task2.api.factory.TvChannelFactory
+import com.epam.functions.task2.repository.ContentDataSource
+import com.epam.functions.task2.repository.mapper.QueryMapper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 
 private const val TITLE_BORDER = "============="
-
-private fun String.isEndProgram(): Boolean = this.equals("exit", ignoreCase = true)
+var isRunning = true
 
 @kotlinx.coroutines.ExperimentalCoroutinesApi
 fun main() = runBlocking {
 
-    var isRunning = true
+    val repository = ContentDataSource(engine, queryMapper)
 
-    val engine = ContentSearchEngine(
-        movieFactory = MovieFactory(),
-        tvChannelFactory = TvChannelFactory(),
-        castFactory = CastFactory()
+    println(
+        "$TITLE_BORDER " + "Welcome to EPAM Online TV $TITLE_BORDER" +
+                "\nThere is a lot of content could be found there." +
+                "\nAll you need is to type your search request or \"exit\" to end program"
     )
-
-    val searcher = SearchFacade(engine)
-
-    println(" $TITLE_BORDER Welcome to EPAM Online TV $TITLE_BORDER\nThere is a lot of content could be found there.")
     while (isRunning) {
-        print("Please, type your search query or EXIT for quite: ")
+        print("TYPE REQUEST: ")
         val query = readLine().orEmpty()
         when {
-            query.isBlank() -> {
-                println("Incorrect input")
-                continue
-            }
-            query.isEndProgram() -> isRunning = false
-            else -> proceedSearch(searcher, query)
+            query.isBlank() -> println("Incorrect input")
+            query.isEndProgram() -> proceedExit()
+            else -> proceedSearch(query, repository)
         }
     }
 }
 
 @ExperimentalCoroutinesApi
-private suspend fun proceedSearch(searcher: SearchFacade, query: String) {
-    println("Starting search...")
-    val result = runCatching { searcher.searchContentAsync(query.trim()).await() }.getOrNull()
+private suspend fun proceedSearch(query: String, repository: ContentDataSource) {
+    println("Start searching...")
+    val result = runCatching { repository.searchContentAsync(query.trim()).await() }.getOrNull()
     when {
-        result == null -> println("Invalid assert type")
+        result == null -> println("Invalid asset type is request")
         result.isEmpty() -> println("Sorry, but we found nothing")
         else -> {
             println("Result is:")
@@ -52,3 +46,21 @@ private suspend fun proceedSearch(searcher: SearchFacade, query: String) {
         }
     }
 }
+
+private fun proceedExit() {
+    isRunning = false
+    println("Thank yot for choosing out service. See you next time")
+}
+
+private fun String.isEndProgram(): Boolean = this.equals("exit", ignoreCase = true)
+
+private val queryMapper
+    get() = QueryMapper()
+
+@ExperimentalCoroutinesApi
+private val engine
+    get() = SearchDataSource(
+        movieFactory = MovieFactory(),
+        tvChannelFactory = TvChannelFactory(),
+        castFactory = CastFactory()
+    )

@@ -1,6 +1,6 @@
-package com.epam.functions.task2.factory
+package com.epam.functions.task2.api.factory
 
-import com.epam.functions.task2.content.TvChannel
+import com.epam.functions.task2.api.TvChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 
