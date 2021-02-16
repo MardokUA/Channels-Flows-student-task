@@ -7,23 +7,28 @@ import com.epam.functions.task2.api.factory.MovieFactory
 import com.epam.functions.task2.api.factory.TvChannelFactory
 import com.epam.functions.task2.repository.ContentDataSource
 import com.epam.functions.task2.repository.SearchRepository
-import com.epam.functions.task2.repository.mapper.QueryMapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+/**
+ * This is a simple realization of Service Locator pattern.
+ * It uses 'fabric method' pattern to provide all classes
+ * you need in one place.
+ */
+//TODO: add your realization of each contract in this task
 @ExperimentalCoroutinesApi
 object DependencyProvider {
 
-    fun provideRepository(dispatcher: CoroutineDispatcher): SearchRepository {
-        return ContentDataSource(
-            searchApi = api,
-            mapper = queryMapper,
+    fun provideEngine(dispatcher: CoroutineDispatcher): SearchEngine {
+        return SearchEngine(
+            repository = provideRepository(),
             dispatcher = dispatcher
         )
     }
 
-    val queryMapper
-        get() = QueryMapper()
+    private fun provideRepository(): SearchRepository {
+        return ContentDataSource(searchApi = api)
+    }
 
     val api: SearchApi
         get() = SearchDataSource(

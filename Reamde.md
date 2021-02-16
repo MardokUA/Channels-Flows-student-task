@@ -42,7 +42,7 @@ in order to help you understand what we a talking about.
 Your task is implement search engine, which should work with user's input and understand how and where content should be
 searched. Engine MUST be able to:
 
-* parse user's input and transform it to the search query
+* parse user's input and transform it to the search [Query]
 * search mechanism should ignore a letter's case
 * by default, matches should be found with **contains** method.
 * recognize special character in the text and modifies search approach:
@@ -53,6 +53,6 @@ searched. Engine MUST be able to:
       assets -> [Al Pacino, Pacman], query -> _pac_. Only [Pacman] should be found.
 * depending on the request, the mechanism must search among all content or according to the type specified in the
   request 
-
+* program should work and make requests to the [SearchEngine] until user types "exit" (in any letter case)
 
 
