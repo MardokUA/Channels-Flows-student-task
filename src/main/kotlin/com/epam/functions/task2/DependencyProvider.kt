@@ -5,6 +5,7 @@ import com.epam.functions.task2.api.SearchDataSource
 import com.epam.functions.task2.api.factory.CastFactory
 import com.epam.functions.task2.api.factory.MovieFactory
 import com.epam.functions.task2.api.factory.TvChannelFactory
+import com.epam.functions.task2.engine.SearchEngine
 import com.epam.functions.task2.repository.ContentDataSource
 import com.epam.functions.task2.repository.SearchRepository
 import kotlinx.coroutines.CoroutineDispatcher

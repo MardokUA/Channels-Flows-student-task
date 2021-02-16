@@ -1,7 +1,9 @@
 package com.epam.functions.task2
 
+import com.epam.functions.task2.engine.SearchEngine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 
 private const val TITLE_BORDER = "============="
@@ -11,9 +13,6 @@ var isRunning = true
 TODO: write a program, which should read user's input and shows the result.
       Main logic is described in Readme.md. There are some additional requirements:
     * your realization should use [DependencyProvider] to obtain objects.
-    * when program is started, user should see a greetings message
-    * when program is started, user should see a tip "how to exit program"
-    * when program is completed, user should see a farewell message
  */
 @kotlinx.coroutines.ExperimentalCoroutinesApi
 fun main() = runBlocking {
@@ -39,13 +38,18 @@ fun main() = runBlocking {
 @ExperimentalCoroutinesApi
 private suspend fun proceedSearch(query: String, repository: SearchEngine) {
     println("Start searching...")
-    val result = runCatching { repository.searchContentAsync(query.trim()).await() }.getOrNull()
+    val searchResult = runCatching {
+        repository.searchContentAsync(query.trim()).toList(mutableListOf())
+    }.getOrNull()
     when {
-        result == null -> println("Invalid asset type in request")
-        result.isEmpty() -> println("Sorry, but we found nothing")
+        searchResult == null -> println("Invalid asset type in request")
+        searchResult.isEmpty() -> println("Sorry, but we found nothing")
         else -> {
             println("Result is:")
-            result.forEach { println(it.getPoster()) }
+            searchResult.forEach { result ->
+                println(result.groupName)
+                result.assets.forEach { println(it.toString()) }
+            }
         }
     }
 }

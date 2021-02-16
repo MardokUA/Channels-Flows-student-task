@@ -32,10 +32,11 @@ in coroutine context.
 ## Introduction
 
 Just imagine, that _EPAM_ has its own online cinema. It provides access to a lot of video content and other data, which
-are related to this content. **Asset** - is the base abstract entity, which represents our content. And it has three **Type**'s -
-_VOD_ (video on demand), _LIVE_ (streams) and _CREW_ (people, who participated in film making process). So,
-for example, user can find a film, see small description, take a look on cast and crew and so on. This is just a concept
-in order to help you understand what we a talking about.
+are related to this content. **Asset** - is the base abstract entity, which represents our content. And it has three **
+Type**'s -
+_VOD_ (video on demand), _LIVE_ (streams) and _CREW_ (people, who participated in film making process). So, for example,
+user can find a film, see small description, take a look on cast and crew and so on. This is just a concept in order to
+help you understand what we a talking about.
 
 ### Task description
 
@@ -52,7 +53,12 @@ searched. Engine MUST be able to:
       text For example:
       assets -> [Al Pacino, Pacman], query -> _pac_. Only [Pacman] should be found.
 * depending on the request, the mechanism must search among all content or according to the type specified in the
-  request 
+  request
 * program should work and make requests to the [SearchEngine] until user types "exit" (in any letter case)
+* when program is started, user should see a greetings message
+* when program is started, user should see a tip "how to exit program"
+* when program is completed, user should see a farewell message
 
+In the end, the program should look like :
+![alt text](<./src/main/kotlin/com/epam/functions/task2/screenshot/example.png>) 
 

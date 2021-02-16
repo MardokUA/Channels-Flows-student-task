@@ -39,26 +39,28 @@ abstract class ContentFactory<out T : Asset> {
         "Seven"                                | 811717200000
 
    Live data:
-        "1+1"
-        "Football 1"
-        "Inter"
-        "STB"
-        "5 channel"
-        "ICTV"
-        "National Geographic"
-        "Animal Planet"
-        "Ukraine HD"
-        "History HD"
+        | channel number | name
+        №1               | "1+1"
+        №2               | "Football 1"
+        №3               | "Inter"
+        №4               | "STB"
+        №5               | "5 channel"
+        №6               | "ICTV"
+        №7               | "National Geographic"
+        №8               | "Animal Planet"
+        №9               | "Ukraine HD"
+        №10              | "History HD"
 
    Cast data:
-      "Adriana Ferdynand"
-      "Walenty Kuba"
-      "Jarek Franciszka"
-      "Quintella Hayley"
-      "Fraser Starr"
-      "Wallis Chuck"
-      "Nino Avksenti"
-      "Daviti Ketevan"
-      "Ioane Korneli"
-      "Mariami Nika"
+       | name              | film count
+       "Adriana Ferdynand" | 1
+       "Walenty Kuba"      | 2
+       "Jarek Franciszka"  | 3
+       "Quintella Hayley"  | 4
+       "Fraser Starr"      | 5
+       "Wallis Chuck"      | 6
+       "Nino Avksenti"     | 7
+       "Daviti Ketevan"    | 8
+       "Ioane Korneli"     | 9
+       "Mariami Nika"      | 10
  */

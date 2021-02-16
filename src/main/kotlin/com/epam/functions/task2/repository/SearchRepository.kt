@@ -1,6 +1,7 @@
 package com.epam.functions.task2.repository
 
 import com.epam.functions.task2.api.Asset
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Represent data layer, which designed to use with user's raw input.
@@ -12,5 +13,5 @@ TODO: add realization, which will interact with SearchApi and returns the result
 */
 interface SearchRepository {
 
-    suspend fun searchContentAsync(query: Query): List<Asset>
+    suspend fun searchContentAsync(query: Query): Flow<Asset>
 }

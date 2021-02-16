@@ -6,6 +6,21 @@ import java.util.*
 /**
  * Represents base class of content on the our Online TV service.
  */
+/*
+TODO: implement subclasses of asset as described bellow
+ * Movie (represents VOD)
+    - in [SearchResult] should looks like -> "The Seven Deadly Sins (16.11.2014)"
+    - but searching among this class should ignore release year.
+      For example: query -> 1 shouldn't find "The Seven Deadly Sins (16.11.2014)"
+ * TvChannel (represents LIVE)
+    - in [SearchResult] should look like -> "№2. Football 1"
+    - but searching among this class should ignore channel number.
+       For example: query -> 2 shouldn't find "№2. Football 1"
+  * Cast (represents CREW)
+    - in [SearchResult] should look like -> "Jarek Franciszka (3 films)"
+    - but searching among this class should ignore film counter.
+       For example: query -> 3 shouldn't find "Jarek Franciszka (3 films)"
+ */
 abstract class Asset {
 
     enum class Type {
@@ -31,22 +46,21 @@ abstract class Asset {
 
     abstract val type: Type
 
-    /**
-     * Title of the asset, which holds all neccessary information
-     * TIP: should be used in [com.epam.functions.task2.api.SearchApi] to match search query.
-     * */
+    /** Title of the asset, which holds all necessary information about the asset*/
+    //TODO: should be used in [SearchApi] to match search query.
     abstract fun getPoster(): String
-
-    override fun toString(): String = getPoster()
 }
 
-/** VOD example */
+/**
+ * VOD example
+ */
 data class Movie(
     val label: String,
     val releaseYear: Date,
     override val type: Type = Type.VOD
 ) : Asset() {
-    override fun getPoster(): String = "$label (${SimpleDateFormat("dd.MM.yyyy").format(releaseYear)})"
+    override fun getPoster(): String = label
+    override fun toString(): String = "$label (${SimpleDateFormat("dd.MM.yyyy").format(releaseYear)})"
 }
 
 /** Live example */
@@ -55,7 +69,8 @@ data class TvChannel(
     val number: Int,
     override val type: Type = Type.LIVE
 ) : Asset() {
-    override fun getPoster(): String = "$label (№$number)"
+    override fun getPoster(): String = label
+    override fun toString(): String = "№$number. $label"
 }
 
 /** Crew example */
@@ -65,5 +80,6 @@ data class Cast(
     val filmCount: Int,
     override val type: Type = Type.CREW
 ) : Asset() {
-    override fun getPoster(): String = "$name $surname ($filmCount films)"
+    override fun getPoster(): String = "$name $surname"
+    override fun toString(): String = "${getPoster()} ($filmCount films)"
 }
