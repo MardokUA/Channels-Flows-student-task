@@ -10,12 +10,25 @@ import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 // This function launches a new equipmentLineOne actor
-fun CoroutineScope.createEquipmentLine(name: String): SendChannel<PrepareEquipmentRequest> {
+fun CoroutineScope.createEquipmentLine(equipmentLineName: String): SendChannel<PrepareEquipmentRequest> {
+    // should return actor and contain log("work in equipmentLineName") for each equipmentLine it is important for test!!!
     return actor {
         consumeEach {
-            log("work in $name")
+            log("work in $equipmentLineName")
             delay(Random.nextLong(100, 500))
             it.equipmentChannel.send(EquipmentParts(it.equipment))
         }
     }
 }
+
+// implementation that is exactly expected
+// fun CoroutineScope.createEquipmentLine(equipmentLineName: String): SendChannel<PrepareEquipmentRequest> {
+//    return ... {
+//        ... {
+//            log("work in equipmentLineName")
+//            delay(Random.nextLong(100, 500))
+//            ...
+//        }
+//    }
+//}
+// Please replace ... with your implementation

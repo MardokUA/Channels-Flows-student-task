@@ -33,6 +33,7 @@ suspend fun combineBody(
 ) = select<BodyParts> {
     val channel = Channel<BodyParts>()
     val req = PrepareBodyRequest(chosenBody, channel)
+    // has to implement select<BodyParts> and log(combineBodyBodyLine1) inside onSend() for bodyLineOne and log(combineBodyBodyLine2) inside onSend() for bodyLineTwo!!! it is important for test
     bodyLineOne.onSend(req) {
         log(combineBodyBodyLine1)
         channel.receive()
@@ -53,6 +54,7 @@ suspend fun combineEquipment(
 ) = select<EquipmentParts> {
     val channel = Channel<EquipmentParts>()
     val req = PrepareEquipmentRequest(equipment, channel)
+    // has to implement select<BodyParts> and log(combineEquipmentEquipmentLine1) inside onSend() for equipmentLineOne and log(combineEquipmentEquipmentLine2) inside onSend() for equipmentLineTwo!!! it is important for test
     equipmentLineOne.onSend(req) {
         log(combineEquipmentEquipmentLine1)
         channel.receive()
@@ -71,6 +73,7 @@ fun shutdown(
     equipmentLineOne: SendChannel<PrepareEquipmentRequest>,
     equipmentLineTwo: SendChannel<PrepareEquipmentRequest>
 ): Boolean {
+    // should shotDown all channels and check is it off
     bodyLineOne.close()
     bodyLineTwo.close()
     equipmentLineOne.close()

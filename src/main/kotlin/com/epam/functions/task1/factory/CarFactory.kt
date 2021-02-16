@@ -29,6 +29,7 @@ fun createCar(
 ): ReceiveChannel<OutPut.FinishedCar> =
     scope.produce(CoroutineName(name)) {
         for (order in orders) {
+            // has to use functions finalCompose(), getEquipment(), getBody(), preparedEquipment(), prepareBody()
             log("Processing order: $order")
             val preparedBody = prepareBody(order.body())
             val preparedEquipment = preparedEquipment(order.equipment())
@@ -38,6 +39,29 @@ fun createCar(
             send(finalCompose)
         }
     }
+
+
+// implementation that is exactly expected
+//fun createCar(
+//    orders: ReceiveChannel<Car>,
+//    scope: CoroutineScope,
+//    bodyLineOne: SendChannel<PrepareBodyRequest>,
+//    bodyLineTwo: SendChannel<PrepareBodyRequest>,
+//    equipmentLineOne: SendChannel<PrepareEquipmentRequest>,
+//    equipmentLineTwo: SendChannel<PrepareEquipmentRequest>
+//): ReceiveChannel<OutPut.FinishedCar> =
+//    ... {
+//        for (... in ...) {
+//            log("Processing order: $order")
+//            ...
+//            ...
+//            ...
+//            ...
+//            ...
+//            ...
+//        }
+//    }
+// Please replace ... with your implementation
 
 suspend fun getEquipment(
     preparedEquipment: ChosenEquipment,
