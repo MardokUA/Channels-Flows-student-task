@@ -6,7 +6,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 
-private const val TITLE_BORDER = "============="
 var isRunning = true
 
 /*
@@ -20,9 +19,7 @@ fun main() = runBlocking {
     val engine = DependencyProvider.provideEngine(Dispatchers.IO)
 
     println(
-        "$TITLE_BORDER " + "Welcome to EPAM Online TV $TITLE_BORDER" +
-                "\nThere is a lot of content could be found there." +
-                "\nAll you need is to type your search request or \"exit\" to end program"
+        "$TITLE_BORDER $GREETINGS_MESSAGE $TITLE_BORDER $HINT_MESSAGE"
     )
     while (isRunning) {
         print("TYPE REQUEST: ")

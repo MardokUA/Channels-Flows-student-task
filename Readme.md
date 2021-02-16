@@ -54,7 +54,8 @@ searched. Engine MUST be able to:
       assets -> [Al Pacino, Pacman], query -> _pac_. Only [Pacman] should be found.
 * depending on the request, the mechanism must search among all content or according to the type specified in the
   request
-* program should work and make requests to the [SearchEngine] until user types "exit" (in any letter case)
+* when user entered _empty_ or _blank_ string, search shouldn't start and error message should be thrown.
+* program should work and make requests to the [SearchEngine] until user types "exit" (in any case)
 * when program is started, user should see a greetings message
 * when program is started, user should see a tip "how to exit program"
 * when program is completed, user should see a farewell message
