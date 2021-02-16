@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.Flow
 /*
 TODO:
  * add three factories with given content below:
-    - with Asset.Type.VOD content (Movies data)
-    - with Asset.Type.LIVE content
-    - with Asset.Type.CAST content (Cast data)
+    - with Asset.Type.VOD content (Movies)
+    - with Asset.Type.LIVE content (TvChannel)
+    - with Asset.Type.CAST content (Cast)
  IMPORTANT: do not modify data because it uses in tests.
  */
 abstract class ContentFactory<out T : Asset> {
