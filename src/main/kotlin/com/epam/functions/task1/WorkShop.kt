@@ -40,43 +40,45 @@ Our program should
  */
 
 @kotlinx.coroutines.ExperimentalCoroutinesApi
-fun startWorkShopWork(orders: List<Car>) = runBlocking(CoroutineName("com.epam.functions.task1.main")) {
+fun startWorkShopWork(orders: List<Car>) {
+    runBlocking(CoroutineName("com.epam.functions.task1.main")) {
+        // TODO: remove method impl and add documentation
+        val t = measureTimeMillis {
+            val bodyLineOne = this.createBodyLine(BodyLine1)
+            val bodyLineTwo = this.createBodyLine(BodyLine2)
+            val equipmentLineOne = this.createEquipmentLine(EquipmentLine1)
+            val equipmentLineTwo = this.createEquipmentLine(EquipmentLine2)
 
+            val ordersChannel = processOrders(orders)
+            val carChannelA = createCar(
+                orders = ordersChannel,
+                scope = this,
+                bodyLineOne = bodyLineOne,
+                bodyLineTwo = bodyLineTwo,
+                equipmentLineOne = equipmentLineOne,
+                equipmentLineTwo = equipmentLineTwo
+            )
+            val carChannelB = createCar(
+                orders = ordersChannel,
+                scope = this,
+                bodyLineOne = bodyLineOne,
+                bodyLineTwo = bodyLineTwo,
+                equipmentLineOne = equipmentLineOne,
+                equipmentLineTwo = equipmentLineTwo
+            )
 
-    // TODO: remove method impl and add documentation
-    val t = measureTimeMillis {
-        val bodyLineOne = this.createBodyLine(BodyLine1)
-        val bodyLineTwo = this.createBodyLine(BodyLine2)
-        val equipmentLineOne = this.createEquipmentLine(EquipmentLine1)
-        val equipmentLineTwo = this.createEquipmentLine(EquipmentLine2)
+            performOrderByConstructorTeam(carChannelA, carChannelB)
 
-        val ordersChannel = processOrders(orders)
-        val carChannelA = createCar(
-            orders = ordersChannel,
-            scope = this,
-            bodyLineOne = bodyLineOne,
-            bodyLineTwo = bodyLineTwo,
-            equipmentLineOne = equipmentLineOne,
-            equipmentLineTwo = equipmentLineTwo
-        )
-        val carChannelB = createCar(
-            orders = ordersChannel,
-            scope = this,
-            bodyLineOne = bodyLineOne,
-            bodyLineTwo = bodyLineTwo,
-            equipmentLineOne = equipmentLineOne,
-            equipmentLineTwo = equipmentLineTwo
-        )
-        performOrderByConstructorTeam(carChannelA, carChannelB)
-        val isShotDown = shutdown(
-            bodyLineOne = bodyLineOne,
-            bodyLineTwo = bodyLineTwo,
-            equipmentLineOne = equipmentLineOne,
-            equipmentLineTwo = equipmentLineTwo
-        )
-        log("all channels are shotDown $isShotDown")
+            val isShotDown = shutdown(
+                bodyLineOne = bodyLineOne,
+                bodyLineTwo = bodyLineTwo,
+                equipmentLineOne = equipmentLineOne,
+                equipmentLineTwo = equipmentLineTwo
+            )
+            log("all channels are shotDown $isShotDown")
+        }
+        println("Execution time: $t ms")
     }
-    println("Execution time: $t ms")
 }
 
 @ExperimentalCoroutinesApi

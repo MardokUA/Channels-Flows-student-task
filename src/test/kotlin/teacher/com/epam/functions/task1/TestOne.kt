@@ -2,12 +2,8 @@
 
 package teacher.com.epam.functions.task1
 
-
 import com.epam.functions.task1.*
-import com.epam.functions.task1.data.BodyParts
-import com.epam.functions.task1.data.EquipmentParts
-import com.epam.functions.task1.data.createBodyLine
-import com.epam.functions.task1.data.createEquipmentLine
+import com.epam.functions.task1.data.*
 import com.epam.functions.task1.factory.ChosenBody
 import com.epam.functions.task1.factory.ChosenEquipment
 import com.epam.functions.task1.utils.*
@@ -47,12 +43,9 @@ class WorkShopTest {
             //when
             val bodyLine: SendChannel<PrepareBodyRequest> = createBodyLine(line)
             bodyLine.send(prepareBodyRequestMockk)
-
-
             //then
-//             coVerify { bodyPartsChannelMockk.send(any())}
-//            Assert.assertEquals("[Test worker @coroutine#2] work in $line", outputStreamCaptor.toString().trim())
-            Assert.assertThat(outputStreamCaptor.toString().trim(), CoreMatchers.containsString(line))
+            Assert.assertThat( "actor in createBodyLine doesn't return correct log, please check your implementation",
+                outputStreamCaptor.toString().trim(), CoreMatchers.containsString(line))
             bodyLine.close()
         }
     }
@@ -69,13 +62,9 @@ class WorkShopTest {
             //when
             val equipmentLine: SendChannel<PrepareEquipmentRequest> = createEquipmentLine(line)
             equipmentLine.send(prepareEquipmentRequestMockk)
-
-
             //then
-//             coVerify { bodyPartsChannelMockk.send(any())}
-            Assert.assertThat(outputStreamCaptor.toString().trim(), CoreMatchers.containsString(line))
-
-//            Assert.assertEquals("[Test worker @coroutine#2] work in $line", outputStreamCaptor.toString().trim())
+            Assert.assertThat( "actor in createEquipmentLine doesn't return correct log, please check your implementation",
+                outputStreamCaptor.toString().trim(), CoreMatchers.containsString(line))
             equipmentLine.close()
         }
     }
@@ -98,8 +87,8 @@ class WorkShopTest {
             combineBody(chosenBody, bodyLine1, bodyLine2)
 
             //then
-//             coVerify { bodyPartsChannelMockk.send(any())}
-            Assert.assertThat(outputStreamCaptor.toString().trim(), CoreMatchers.containsString(combineBodyLineTwo))
+            Assert.assertThat("select in combineBody has to work with $combineBodyBodyLine2 but in your implementation it doesn't, and it is sadly ",
+                outputStreamCaptor.toString().trim(), CoreMatchers.containsString(combineBodyLineTwo))
             bodyLine1.close()
             bodyLine2.close()
         }
@@ -121,8 +110,8 @@ class WorkShopTest {
             combineBody(chosenBody, bodyLine1, bodyLine2)
 
             //then
-//             coVerify { bodyPartsChannelMockk.send(any())}
-            Assert.assertThat(outputStreamCaptor.toString().trim(), CoreMatchers.containsString(combineBodyLineOne))
+            Assert.assertThat("select in combineBody has to work with $combineBodyBodyLine1 but in your implementation it doesn't, and it is sadly ",
+                outputStreamCaptor.toString().trim(), CoreMatchers.containsString(combineBodyLineOne))
             bodyLine1.close()
             bodyLine2.close()
         }
@@ -146,8 +135,7 @@ class WorkShopTest {
             combineEquipment(chosenEquipment, equipmentLine1, equipmentLine2)
 
             //then
-//             coVerify { bodyPartsChannelMockk.send(any())}
-            Assert.assertThat(
+            Assert.assertThat("select in combineEquipment has to work with $combineEquipmentEquipmentLine2 but in your implementation it doesn't, and it is sadly ",
                 outputStreamCaptor.toString().trim(),
                 CoreMatchers.containsString(combineEquipmentEquipmentLineTwo)
             )
@@ -172,8 +160,7 @@ class WorkShopTest {
             combineEquipment(chosenEquipment, equipmentLine1, equipmentLine2)
 
             //then
-//             coVerify { bodyPartsChannelMockk.send(any())}
-            Assert.assertThat(
+            Assert.assertThat("select in combineEquipment has to work with $combineEquipmentEquipmentLine1 but in your implementation it doesn't, and it is sadly ",
                 outputStreamCaptor.toString().trim(),
                 CoreMatchers.containsString(combineEquipmentEquipmentLineOne)
             )
@@ -199,8 +186,49 @@ class WorkShopTest {
             //when
             val isShutDown = shutdown(bodyLine1, bodyLine2, equipmentLine1, equipmentLine2)
             //then
-//             coVerify { bodyPartsChannelMockk.send(any())}
-            Assert.assertEquals(true, isShutDown)
+            Assert.assertEquals("one, all or non channels were not closed ",true, isShutDown)
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun testIsThatOrderedIsProduced() {
+        runBlocking {
+            val orders = listOf(
+                Car(Part.Body.Sedan, Part.Equipment.Premium),
+                Car(Part.Body.SportCar, Part.Equipment.Family),
+                Car(Part.Body.Van, Part.Equipment.LowCost),
+            )
+            startWorkShopWork(orders)
+            Assert.assertThat( "result output doesn't contain first ordered element",
+                outputStreamCaptor.toString().trim(),
+                CoreMatchers.containsString(orders[0].toString())
+            )
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    @Test
+    fun testIsConstructorsTeamsWorkInParallel() {
+        runBlocking {
+            val orders = listOf(
+                Car(Part.Body.Sedan, Part.Equipment.Premium),
+                Car(Part.Body.SportCar, Part.Equipment.Family),
+                Car(Part.Body.Sedan, Part.Equipment.LowCost),
+                Car(Part.Body.Van, Part.Equipment.Premium),
+                Car(Part.Body.Sedan, Part.Equipment.LowCost),
+                Car(Part.Body.Van, Part.Equipment.LowCost),
+                Car(Part.Body.Van, Part.Equipment.LowCost)
+            )
+            startWorkShopWork(orders)
+            Assert.assertThat("Constructors team 1 doesn't take part in the process ",
+                outputStreamCaptor.toString().trim(),
+                CoreMatchers.containsString(ProvidedByConstructorTeam1)
+            )
+            Assert.assertThat("Constructors team 2 doesn't take part in the process ",
+                outputStreamCaptor.toString().trim(),
+                CoreMatchers.containsString(ProvidedByConstructorTeam2)
+            )
         }
     }
 
@@ -208,5 +236,4 @@ class WorkShopTest {
     fun tearDown() {
         System.setOut(standardOut)
     }
-
 }

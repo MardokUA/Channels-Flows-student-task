@@ -7,10 +7,13 @@ import com.epam.functions.task1.combineEquipment
 import com.epam.functions.task1.data.*
 import com.epam.functions.task1.utils.log
 import com.epam.functions.task1.utils.name
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.delay
 
 
 // producer of completed car orders
@@ -29,27 +32,41 @@ fun createCar(
             log("Processing order: $order")
             val preparedBody = prepareBody(order.body())
             val preparedEquipment = preparedEquipment(order.equipment())
-            val bodyDeferred = async { combineBody(preparedBody, bodyLineOne, bodyLineTwo) }
-            val equipmentDeferred = async { combineEquipment(preparedEquipment, equipmentLineOne, equipmentLineTwo) }
-            val finalCompose = finalCompose(order, bodyDeferred.await(), equipmentDeferred.await())
+            val body = getBody(preparedBody, bodyLineOne, bodyLineTwo)
+            val equipment = getEquipment(preparedEquipment, equipmentLineOne, equipmentLineTwo)
+            val finalCompose = finalCompose(order, body, equipment)
             send(finalCompose)
         }
     }
 
-private suspend fun prepareBody(body: Part.Body): ChosenBody {
+suspend fun getEquipment(
+    preparedEquipment: ChosenEquipment,
+    equipmentLineOne: SendChannel<PrepareEquipmentRequest>,
+    equipmentLineTwo: SendChannel<PrepareEquipmentRequest>
+) = combineEquipment(preparedEquipment, equipmentLineOne, equipmentLineTwo)
+
+
+suspend fun getBody(
+    preparedBody: ChosenBody,
+    bodyLineOne: SendChannel<PrepareBodyRequest>,
+    bodyLineTwo: SendChannel<PrepareBodyRequest>
+) = combineBody(preparedBody, bodyLineOne, bodyLineTwo)
+
+
+suspend fun prepareBody(body: Part.Body): ChosenBody {
     log("Preparing car body $body")
     delay(400)
     return ChosenBody(body)
 }
 
-private suspend fun preparedEquipment(equipment: Part.Equipment): ChosenEquipment {
+suspend fun preparedEquipment(equipment: Part.Equipment): ChosenEquipment {
     log("Preparing car equipment $equipment")
     delay(400)
     return ChosenEquipment(equipment)
 }
 
 // composes provided BodyParts and EquipmentParts to FinishedCar
-private suspend fun finalCompose(
+suspend fun finalCompose(
     order: Car,
     bodyParts: BodyParts,
     equipment: EquipmentParts
