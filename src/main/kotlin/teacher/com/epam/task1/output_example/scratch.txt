@@ -1,0 +1,74 @@
+[main] car: body=sedan equipment=premium price=$120000.00
+[main] car: body=sport_car equipment=family price=$130000.00
+[main] car: body=sedan equipment=low_cost price=$40000.00
+[main] car: body=van equipment=premium price=$130000.50
+[main] car: body=sedan equipment=low_cost price=$40000.00
+[main] car: body=van equipment=low_cost price=$50000.50
+[main] car: body=van equipment=low_cost price=$50000.50
+[main] Processing order: car: body=sedan equipment=premium price=$120000.00
+[main] Preparing car body sedan
+[main] Processing order: car: body=sport_car equipment=family price=$130000.00
+[main] Preparing car body sport_car
+[main] Preparing car equipment premium
+[main] Preparing car equipment family
+[main] combineBody bodyLine 1
+[main] combineBody bodyLine 2
+[main] work in Body line 1
+[main] work in Body line 2
+[main] combineEquipment equipmentLine 1
+[main] work in Equipment line 1
+[main] combineEquipment equipmentLine 2
+[main] work in Equipment line 2
+[main] Combining parts BodyParts(body=chosenBody sedan), EquipmentParts(equipment=chosenEquipment premium)
+[main] Processing order: car: body=sedan equipment=low_cost price=$40000.00
+[main] Preparing car body sedan
+[main] Provided by constructor team 1 : FinishedCar(order=car: body=sedan equipment=premium price=$120000.00, bodyPartsShot=BodyParts(body=chosenBody sedan), chosenEquipment=EquipmentParts(equipment=chosenEquipment premium))
+[main] Combining parts BodyParts(body=chosenBody sport_car), EquipmentParts(equipment=chosenEquipment family)
+[main] Processing order: car: body=van equipment=premium price=$130000.50
+[main] Preparing car body van
+[main] Provided by constructor team 2 : FinishedCar(order=car: body=sport_car equipment=family price=$130000.00, bodyPartsShot=BodyParts(body=chosenBody sport_car), chosenEquipment=EquipmentParts(equipment=chosenEquipment family))
+[main] Preparing car equipment low_cost
+[main] Preparing car equipment premium
+[main] combineBody bodyLine 1
+[main] work in Body line 1
+[main] combineEquipment equipmentLine 1
+[main] work in Equipment line 1
+[main] combineBody bodyLine 1
+[main] work in Body line 1
+[main] combineEquipment equipmentLine 2
+[main] work in Equipment line 2
+[main] Combining parts BodyParts(body=chosenBody sedan), EquipmentParts(equipment=chosenEquipment low_cost)
+[main] Processing order: car: body=sedan equipment=low_cost price=$40000.00
+[main] Preparing car body sedan
+[main] Provided by constructor team 1 : FinishedCar(order=car: body=sedan equipment=low_cost price=$40000.00, bodyPartsShot=BodyParts(body=chosenBody sedan), chosenEquipment=EquipmentParts(equipment=chosenEquipment low_cost))
+[main] Combining parts BodyParts(body=chosenBody van), EquipmentParts(equipment=chosenEquipment premium)
+[main] Preparing car equipment low_cost
+[main] Processing order: car: body=van equipment=low_cost price=$50000.50
+[main] Preparing car body van
+[main] Provided by constructor team 2 : FinishedCar(order=car: body=van equipment=premium price=$130000.50, bodyPartsShot=BodyParts(body=chosenBody van), chosenEquipment=EquipmentParts(equipment=chosenEquipment premium))
+[main] combineBody bodyLine 1
+[main] Preparing car equipment low_cost
+[main] work in Body line 1
+[main] combineEquipment equipmentLine 1
+[main] work in Equipment line 1
+[main] combineBody bodyLine 1
+[main] work in Body line 1
+[main] Combining parts BodyParts(body=chosenBody sedan), EquipmentParts(equipment=chosenEquipment low_cost)
+[main] combineEquipment equipmentLine 1
+[main] work in Equipment line 1
+[main] Processing order: car: body=van equipment=low_cost price=$50000.50
+[main] Preparing car body van
+[main] Provided by constructor team 1 : FinishedCar(order=car: body=sedan equipment=low_cost price=$40000.00, bodyPartsShot=BodyParts(body=chosenBody sedan), chosenEquipment=EquipmentParts(equipment=chosenEquipment low_cost))
+[main] Preparing car equipment low_cost
+[main] Combining parts BodyParts(body=chosenBody van), EquipmentParts(equipment=chosenEquipment low_cost)
+[main] Provided by constructor team 2 : FinishedCar(order=car: body=van equipment=low_cost price=$50000.50, bodyPartsShot=BodyParts(body=chosenBody van), chosenEquipment=EquipmentParts(equipment=chosenEquipment low_cost))
+[main] combineBody bodyLine 1
+[main] work in Body line 1
+[main] combineEquipment equipmentLine 1
+[main] work in Equipment line 1
+[main] Combining parts BodyParts(body=chosenBody van), EquipmentParts(equipment=chosenEquipment low_cost)
+[main] Provided by constructor team 1 : FinishedCar(order=car: body=van equipment=low_cost price=$50000.50, bodyPartsShot=BodyParts(body=chosenBody van), chosenEquipment=EquipmentParts(equipment=chosenEquipment low_cost))
+[main] all channels are shotDown true
+Execution time: 6297 ms
+
+Process finished with exit code 0
