@@ -13,10 +13,14 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.4.2")
+    val coroutineVer = "1.4.2"
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:$coroutineVer")
     implementation(kotlin("reflect"))
+
     testImplementation(kotlin("test-junit"))
     testImplementation("io.kotlintest:kotlintest-runner-junit4:3.4.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutineVer")
+    testImplementation("io.mockk:mockk:1.10.6")
 }
 
 tasks.test {
