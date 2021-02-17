@@ -28,13 +28,12 @@ object DependencyProvider {
     }
 
     private fun provideRepository(): SearchRepository {
-        return ContentDataSource(searchApi = api)
+        return ContentDataSource(searchApi = provideApi())
     }
 
-    val api: SearchApi
-        get() = SearchDataSource(
-            movieFactory = MovieFactory(),
-            tvChannelFactory = TvChannelFactory(),
-            castFactory = CastFactory()
-        )
+    private fun provideApi(): SearchApi = SearchDataSource(
+        movieFactory = MovieFactory(),
+        tvChannelFactory = TvChannelFactory(),
+        castFactory = CastFactory()
+    )
 }

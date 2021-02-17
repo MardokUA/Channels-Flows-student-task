@@ -12,7 +12,7 @@ TODO:
  * add three factories with given content below:
     - with Asset.Type.VOD content (Movies)
     - with Asset.Type.LIVE content (TvChannel)
-    - with Asset.Type.CAST content (Cast)
+    - with Asset.Type.CREW content (Cast)
  IMPORTANT: do not modify data because it uses in tests.
  */
 abstract class ContentFactory<out T : Asset> {
@@ -38,7 +38,7 @@ abstract class ContentFactory<out T : Asset> {
         "Beauty and the Beast"                 | 1487800800000
         "Seven"                                | 811717200000
 
-   Live data:
+   Tv Channel data:
         | channel number | name
         №1               | "1+1"
         №2               | "Football 1"
