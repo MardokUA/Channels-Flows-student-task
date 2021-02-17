@@ -17,7 +17,10 @@ import kotlinx.coroutines.delay
 
 
 // producer of completed car orders
-// TODO: remove method impl and add documentation
+/*
+TODO should return produce and contain log("Processing order: $order") it is important for test!!!
+  it is recommended to use delay inside actor body
+ */
 @ExperimentalCoroutinesApi
 fun createCar(
     orders: ReceiveChannel<Car>,
@@ -40,28 +43,6 @@ fun createCar(
         }
     }
 
-
-// implementation that is exactly expected
-//fun createCar(
-//    orders: ReceiveChannel<Car>,
-//    scope: CoroutineScope,
-//    bodyLineOne: SendChannel<PrepareBodyRequest>,
-//    bodyLineTwo: SendChannel<PrepareBodyRequest>,
-//    equipmentLineOne: SendChannel<PrepareEquipmentRequest>,
-//    equipmentLineTwo: SendChannel<PrepareEquipmentRequest>
-//): ReceiveChannel<OutPut.FinishedCar> =
-//    ... {
-//        for (... in ...) {
-//            log("Processing order: $order")
-//            ...
-//            ...
-//            ...
-//            ...
-//            ...
-//            ...
-//        }
-//    }
-// Please replace ... with your implementation
 
 suspend fun getEquipment(
     preparedEquipment: ChosenEquipment,

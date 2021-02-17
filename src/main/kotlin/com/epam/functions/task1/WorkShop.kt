@@ -81,15 +81,17 @@ fun startWorkShopWork(orders: List<Car>) {
     }
 }
 
+/**
+ *  as of right now there's no 'onReceiveOrClosed' operator so we need to track this manually
+ * if the carChannel[A|B] was closed, then onReceiveOrNull is fired on each loop rather
+ * than suspending
+ * this switches on receive from the two constructors, when an order arrives, we print it here
+ */
 @ExperimentalCoroutinesApi
 private suspend fun performOrderByConstructorTeam(
     carChannelA: ReceiveChannel<OutPut.FinishedCar>,
     carChannelB: ReceiveChannel<OutPut.FinishedCar>
 ) {
-    // as of right now there's no 'onReceiveOrClosed' operator so we need to track this manually
-    // if the carChannel[A|B] was closed, then onReceiveOrNull is fired on each loop rather
-    // than suspending
-    // this switches on receive from the two constructors, when an order arrives, we print it here
     var isConstructorOneActive = true
     var isConstructorTwoActive = true
     while (isConstructorOneActive || isConstructorTwoActive) {
@@ -110,7 +112,9 @@ private suspend fun performOrderByConstructorTeam(
     }
 }
 
-//  creates ReceiveChannel to emit orders for constructors teams.
+/**
+ * creates ReceiveChannel to emit orders for constructors teams.
+ * */
 // TODO: remove method impl and add documentation
 @ExperimentalCoroutinesApi
 private fun CoroutineScope.processOrders(orders: List<Car>) =
