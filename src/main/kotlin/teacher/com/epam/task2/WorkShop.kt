@@ -2,7 +2,8 @@ package teacher.com.epam.task2
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.runBlocking
 import teacher.com.epam.task2.engine.SearchEngine
 
@@ -25,7 +26,6 @@ fun main() = runBlocking {
         print("TYPE REQUEST: ")
         val query = readLine().orEmpty()
         when {
-            query.isBlank() -> println("Incorrect input")
             query.isEndProgram() -> proceedExit()
             else -> proceedSearch(query, engine)
         }
@@ -34,21 +34,29 @@ fun main() = runBlocking {
 
 @ExperimentalCoroutinesApi
 private suspend fun proceedSearch(query: String, repository: SearchEngine) {
-    println("Start searching...")
-    val searchResult = runCatching {
-        repository.searchContentAsync(query.trim()).toList(mutableListOf())
-    }.getOrNull()
-    when {
-        searchResult == null -> println("Invalid asset type in request")
-        searchResult.isEmpty() -> println("Sorry, but we found nothing")
-        else -> {
-            println("Result is:")
-            searchResult.forEach { result ->
+    try {
+        println("Start searching...")
+        repository.searchContentAsync(query)
+            .onEmpty { println("Sorry, but we found nothing") }
+            .collectIndexed { index, result ->
+                if (index == 0) {
+                    println("Result is:")
+                }
                 println(result.groupName)
                 result.assets.forEach { println(it.toString()) }
             }
-        }
+
+    } catch (error: Throwable) {
+        proceedError(error)
     }
+}
+
+fun proceedError(error: Throwable) {
+    val errorMessage = when (error) {
+        is IllegalArgumentException -> "Invalid asset type in request"
+        else -> error.message ?: "Something went wrong"
+    }
+    println("$errorMessage. Please, try again")
 }
 
 private fun proceedExit() {

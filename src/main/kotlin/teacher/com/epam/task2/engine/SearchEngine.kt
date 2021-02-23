@@ -27,6 +27,8 @@ class SearchEngine(
     private val regex: Regex = Regex("(\\?\\w{3,4}\$)")
 
     suspend fun searchContentAsync(rawInput: String): Flow<SearchResult> {
+        // validate rawInput and decide is proceed needed
+        validateInput(rawInput) { message -> error(message) }
         // try to find type in search request
         val matchResult: MatchResult? = regex.find(rawInput)
         // convert string type to Asset.Type if it found
@@ -36,11 +38,23 @@ class SearchEngine(
         // convert input to query based on type
         val query = input.toQuery(type)
 
-        return repository.searchContentAsync(query).toList(mutableListOf())
+        return repository.searchContentAsync(query)
+            .flowOn(dispatcher)
+            .toList(mutableListOf())
             .groupBy { it.type }
             .map { data -> SearchResult(data.value, data.key, data.key.toGroupName()) }
             .asFlow()
-            .flowOn(dispatcher)
+
+    }
+
+    private inline fun validateInput(rawInput: String, block: (String) -> Nothing) {
+        val message = when {
+            rawInput == START_WITH_INDICATOR -> "Incorrect input"
+            rawInput.isEmpty() -> "Input is empty"
+            rawInput.isBlank() -> "Input is blank"
+            else -> null
+        }
+        message?.let(block)
     }
 
     private fun String?.toAssetType(): Asset.Type? {
@@ -62,12 +76,17 @@ class SearchEngine(
             }
         }
     }
-}
 
-private fun Asset.Type.toGroupName(): String {
-    return when (this) {
-        Asset.Type.VOD -> "-- Movies --"
-        Asset.Type.LIVE -> "-- TvChannels --"
-        Asset.Type.CREW -> "-- Cast and Crew --"
+    private fun Asset.Type.toGroupName(): String {
+        return when (this) {
+            Asset.Type.VOD -> "-- Movies --"
+            Asset.Type.LIVE -> "-- TvChannels --"
+            Asset.Type.CREW -> "-- Cast and Crew --"
+        }
+    }
+
+    companion object {
+        private const val START_WITH_INDICATOR = "@"
     }
 }
+
