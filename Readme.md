@@ -61,5 +61,5 @@ searched. Engine MUST be able to:
 * when program is completed, user should see a farewell message
 
 In the end, the program should look like :
-![alt text](<./src/main/kotlin/com/epam/functions/task2/screenshot/example.png>) 
+![alt text](<./src/main/kotlin/teacher/com/epam/task2/screenshot/example.png>) 
 
